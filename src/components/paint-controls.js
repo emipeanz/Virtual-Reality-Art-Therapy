@@ -58,6 +58,7 @@ AFRAME.registerComponent('paint-controls', {
     });
 
     el.addEventListener('controllerconnected', function (evt) {
+      console.log("controller connected = ", evt.detail.name)
       var controllerName = evt.detail.name;
       if (controllerName === 'windows-motion-controls')
       {
@@ -180,6 +181,7 @@ AFRAME.registerComponent('paint-controls', {
   },
 
   onModelLoaded: function (evt) {
+    console.log('onModelLoad');
     if (evt.target !== this.el) { return; }
 
     var controllerObject3D = evt.detail.model;

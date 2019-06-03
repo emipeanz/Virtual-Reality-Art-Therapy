@@ -48,20 +48,23 @@ AFRAME.registerComponent('brush', {
     });
 
     this.el.addEventListener('paint', function (evt) {
+      var el = self.el;
       if (!self.data.enabled) { return; }
       // Trigger
       var value = evt.detail.value;
       self.sizeModifier = value;
-      if (value > 0.1) {
-        if (!self.active) {
+      if (value > 0.1) { //if trigger pressure is above
+        if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
+          this.el.emit('stroke-paint-start');
         }
-      } else {
-        if (self.active) {
+      } else {  // trigger pressed, but too lightly
+        if (self.active) {  // if you were just painting
           self.previousEntity = self.currentEntity;
           self.currentStroke = null;
         }
+        this.el.emit("stroke-paint-end" , new Date())
         self.active = false;
       }
     });
@@ -77,6 +80,11 @@ AFRAME.registerComponent('brush', {
     }
   },
   tick: (function () {
+
+    //this.el.addEventListener('axismove', function(evt) {
+    //  console.log(evt)
+    //})
+
     var position = new THREE.Vector3();
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();

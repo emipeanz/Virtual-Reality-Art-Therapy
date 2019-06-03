@@ -1,4 +1,4 @@
-window.Utils = (function() {
+ window.Utils = (function() {
     const DIGITS = 6;
     function numberToFixed (number) {
         return parseFloat(number.toFixed(DIGITS));

@@ -22,9 +22,13 @@ require('./components/paint-controls.js');
 require('./components/ui.js');
 require('./components/ui-raycaster.js');
 
+require('./components/timer.js');
+
 require('./brushes/line.js');
 require('./brushes/stamp.js');
 require('./brushes/spheres.js');
 require('./brushes/cubes.js');
 require('./brushes/rainbow.js');
 require('./brushes/single-sphere.js');
+
+
