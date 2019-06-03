@@ -7,7 +7,7 @@ AFRAME.registerComponent('paint-controls', {
   dependencies: ['brush'],
 
   schema: {
-    hand: {default: 'left'}
+    hand: {default: 'right'}
   },
 
   init: function () {
@@ -211,7 +211,6 @@ AFRAME.registerComponent('paint-controls', {
     }
     if (!material) { return; }
     if (buttonName === 'grip') {
-      buttonMeshes.grip.left.material = material;
       buttonMeshes.grip.right.material = material;
       return;
     }

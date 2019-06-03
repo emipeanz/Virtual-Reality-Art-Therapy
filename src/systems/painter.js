@@ -10,41 +10,17 @@ AFRAME.registerSystem('painter', {
       mappings: {
         painting: {
           common: {
-            'grip.down': 'undo',
+            // 'grip.down': 'undo',
             'trigger.changed': 'paint'
-          },
+          }
 
-          'vive-controls': {
-            'axis.move': 'changeBrushSizeInc',
-            'trackpad.touchstart': 'startChangeBrushSize',
-            'menu.down': 'toggleMenu',
-
-            // Teleport
-            'trackpad.down': 'aim',
-            'trackpad.up': 'teleport'
-          },
-
-          'oculus-touch-controls': {
-            'axis.move': 'changeBrushSizeAbs',
-            'abutton.down': 'toggleMenu',
-            'xbutton.down': 'toggleMenu',
-
-            // Teleport
-            'ybutton.down': 'aim',
-            'ybutton.up': 'teleport',
-
-            'bbutton.down': 'aim',
-            'bbutton.up': 'teleport'
-          },
-
-          'windows-motion-controls': {
-            'axis.move': 'changeBrushSizeAbs',
-            'menu.down': 'toggleMenu',
-
-            // Teleport
-            'trackpad.down': 'aim',
-            'trackpad.up': 'teleport'
-          },
+          // 'vive-controls': {
+          //   'axis.move': 'changeBrushSizeInc',
+          //
+          //   Middle button press and release
+          //   'trackpad.down': 'aim',
+          //   'trackpad.up': 'teleport'
+          // }
         }
       }
     };
