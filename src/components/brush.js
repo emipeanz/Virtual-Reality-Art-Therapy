@@ -50,10 +50,10 @@ AFRAME.registerComponent('brush', {
         }
       } else {  // trigger pressed, but too lightly
         if (self.active) {  // if you were just painting
-          self.previousEntity = self.currentEntity;
-          self.currentStroke = null;
+            self.previousEntity = self.currentEntity;
+            self.currentStroke = null;
+            self.el.emit('stroke-paint-changed', false);
         }
-        self.el.emit('stroke-paint-changed', false);
         self.active = false;
       }
     })
