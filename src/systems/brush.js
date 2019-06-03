@@ -246,7 +246,7 @@ AFRAME.registerSystem('brush', {
       var color = new THREE.Color(Math.random(), Math.random(), Math.random());
 
       var stroke = this.addNewStroke(brushName, color, size);
-      var entity = document.querySelector('#left-hand');
+      var entity = document.querySelector('#right-hand');
       entity.emit('stroke-started', { entity: entity, stroke: stroke });
 
       var position = new THREE.Vector3(x, y, z);
@@ -270,7 +270,7 @@ AFRAME.registerSystem('brush', {
   generateRandomStrokes: function (numStrokes) {
     function randNeg () { return 2 * Math.random() - 1; }
 
-    var entity = document.querySelector('#left-hand');
+    var entity = document.querySelector('#right-hand');
 
     var brushesNames = Object.keys(AFRAME.BRUSHES);
 

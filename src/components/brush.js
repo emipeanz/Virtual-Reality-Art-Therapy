@@ -4,16 +4,17 @@ AFRAME.registerComponent('brush', {
     color: {type: 'color', default: '#ef2d5e'},
     size: {default: 0.01, min: 0.001, max: 0.3},
     brush: {default: 'smooth'},
-    enabled: { default: true }
+    enabled: { default: true },
+    active: { default: false }
   },
   init: function () {
     var data = this.data;
     this.color = new THREE.Color(data.color);
+    this.active = false;
 
     this.el.emit('brushcolor-changed', {color: this.color});
     this.el.emit('brushsize-changed', {brushSize: data.size});
 
-    this.active = false;
     this.obj = this.el.object3D;
 
     this.currentStroke = null;
@@ -29,18 +30,7 @@ AFRAME.registerComponent('brush', {
     var self = this;
 
     this.previousAxis = 0;
-/*
-    this.el.addEventListener('axismove', function (evt) {
-      if (evt.detail.axis[0] === 0 && evt.detail.axis[1] === 0 || this.previousAxis === evt.detail.axis[1]) {
-        return;
-      }
 
-      this.previousAxis = evt.detail.axis[1];
-      var size = (evt.detail.axis[1] + 1) / 2 * self.schema.size.max;
-
-      self.el.setAttribute('brush', 'size', size);
-    });
-*/
     this.el.addEventListener('undo', function(evt) {
       if (!self.data.enabled) { return; }
       self.system.undo();
@@ -48,7 +38,6 @@ AFRAME.registerComponent('brush', {
     });
 
     this.el.addEventListener('paint', function (evt) {
-      var el = self.el;
       if (!self.data.enabled) { return; }
       // Trigger
       var value = evt.detail.value;
@@ -57,17 +46,18 @@ AFRAME.registerComponent('brush', {
         if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
-          this.el.emit('stroke-paint-start');
+          self.el.emit('stroke-paint-changed', true);
         }
       } else {  // trigger pressed, but too lightly
         if (self.active) {  // if you were just painting
           self.previousEntity = self.currentEntity;
           self.currentStroke = null;
         }
-        this.el.emit("stroke-paint-end" , new Date())
+        self.el.emit('stroke-paint-changed', false);
         self.active = false;
       }
-    });
+    })
+
   },
   update: function (oldData) {
     var data = this.data;
