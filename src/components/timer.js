@@ -8,17 +8,22 @@ AFRAME.registerComponent('timer', {
     },
 
     init: function(){
-        console.log("init timer")
+        var self = this
+        
         //Set up initial state and variables
         var data = this.data; //get all the data from the schema.
         var el = this.el; //get reference to the entity.
 
-        this.strokeActive = false;  //to handle playing/pausing the timer
-        var date= new Date(); // to get current time
-        this.StartTime=new Date().getTime(); //calulate the target time
-        this.TotalTime = this.StartTime - this.StartTime;
-
-        this.TotalPausedTime = this.StartTime - this.StartTime;
+        this.strokeActive = false;  // This will be true when a stroke is currently active
+        
+        // The following variables are used to record the amount of "active time" for a session
+        this.startTime = new Date().getTime();
+        this.startTimeOfPause = new Date().getTime();
+        
+        // "Active time" is the time spent painting
+        this.totalActiveTime = this.startTime - this.startTime;
+        // "Idle time" is the time spent not painting
+        this.totalIdleTime = this.startTime - this.startTime;
 
         mainParent = new THREE.Object3D();
 
@@ -193,18 +198,29 @@ AFRAME.registerComponent('timer', {
         el.setObject3D('TimerMesh', mainParent); //setting the initialized object(seconds) to the our entity
 
         el.sceneEl.addEventListener('stroke-paint-changed', function (evt) {
-            console.log('timer event handler', evt.detail)
-            self.strokeActive = evt.detail;});
+            self.strokeActive = evt.detail;
+
             if (self.strokeActive) {
-                this.strokeStartTime = new Date().getTime();
+                var lengthOfPause = new Date().getTime() - self.startTimeOfPause;
+                self.totalIdleTime = self.totalIdleTime + lengthOfPause;
             }
             else {
-                this.strokeEndtime = new Date().getTime();
-                timeDiff = this.strokeEndtime - this.strokeStartTime;
-                this.TotalTime = this.TotalTime + timeDiff;
+                self.startTimeOfPause = new Date().getTime();
             }
+        });
     },
+
+    getTotalTimeElapsed: function() {
+        return new Date().getTime() - this.startTime
+    },
+
     tick: function () {
+        this.totalActiveTime = this.getTotalTimeElapsed() - this.totalIdleTime;
+        console.log("total time:", this.getTotalTimeElapsed())
+        console.log("active time: ", this.totalActiveTime)
+        console.log("idle time: ", this.totalIdleTime)
+        console.log("")
+
         this.Setdigit();
     },
 
@@ -223,8 +239,7 @@ AFRAME.registerComponent('timer', {
                         [1,1,1,1,0,1,0]]; //9
         //The index values with 1 indicate the children which will be visible for a digit value.
 
-        console.log('   total time', this.TotalTime)
-        var tensPlace = parseInt((this.TotalTime/1000)/10);
+        var tensPlace = parseInt((this.totalActiveTime/1000)/10);
         if(tensPlace){
             for(var a=0;a<7;a++)
             {
@@ -235,7 +250,7 @@ AFRAME.registerComponent('timer', {
             }
         }
 
-        var onesPlace = parseInt((this.TotalTime/1000)%10);
+        var onesPlace = parseInt((this.totalActiveTime/1000)%10);
         if(onesPlace){
             for(var i=7;i<14;i++)
             {
@@ -247,7 +262,7 @@ AFRAME.registerComponent('timer', {
         }
 
 
-        minutesNum = Math.round(((this.TotalTime % 86400000) % 3600000) / 60000)
+        minutesNum = Math.round(((this.totalActiveTime % 86400000) % 3600000) / 60000)
         var minTensPlace = parseInt(minutesNum/10);
         if(minTensPlace){
             for(var a=0;a<7;a++)
