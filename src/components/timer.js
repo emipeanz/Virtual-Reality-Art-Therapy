@@ -215,7 +215,9 @@ AFRAME.registerComponent('timer', {
     },
 
     tick: function () {
-        this.totalActiveTime = this.getTotalTimeElapsed() - this.totalIdleTime;
+        if (this.strokeActive) {
+            this.totalActiveTime = this.getTotalTimeElapsed() - this.totalIdleTime;
+        }
         console.log("total time:", this.getTotalTimeElapsed())
         console.log("active time: ", this.totalActiveTime)
         console.log("idle time: ", this.totalIdleTime)
