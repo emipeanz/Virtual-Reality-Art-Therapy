@@ -14,6 +14,7 @@ AFRAME.registerComponent('timer', {
         var data = this.data; //get all the data from the schema.
         var el = this.el; //get reference to the entity.
 
+        this.gestureCount = 0;
         this.strokeActive = false;  // This will be true when a stroke is currently active
         
         // The following variables are used to record the amount of "active time" for a session
@@ -30,6 +31,7 @@ AFRAME.registerComponent('timer', {
             self.strokeActive = evt.detail;
 
             if (self.strokeActive) {
+                self.gestureCount++;
                 var lengthOfPause = new Date().getTime() - self.startTimeOfPause;
                 self.totalIdleTime = self.totalIdleTime + lengthOfPause;
             }
@@ -44,6 +46,7 @@ AFRAME.registerComponent('timer', {
     },
 
     tick: function () {
+        console.log(this.gestureCount)
         if (this.strokeActive) {
             this.totalActiveTime = this.getTotalTimeElapsed() - this.totalIdleTime;
         }
