@@ -22,7 +22,7 @@ require('./components/paint-controls.js');
 require('./components/ui.js');
 require('./components/ui-raycaster.js');
 
-require('./components/timer.js');
+require('./components/metrics.js');
 
 require('./brushes/line.js');
 require('./brushes/stamp.js');
