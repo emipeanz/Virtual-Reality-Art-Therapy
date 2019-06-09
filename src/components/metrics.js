@@ -47,6 +47,13 @@ AFRAME.registerComponent('metrics', {
         }
     },
 
+    // Useful for debugging purposes
+    printMetrics: function() {
+        console.log("")
+        console.log("Active time:", this.msToTime(this.totalActiveTime))
+        console.log("Gesture count:", this.gestureCount)
+    },
+
     msToTime: function(s) {
         var ms = s % 1000;
         s = (s - ms) / 1000;
