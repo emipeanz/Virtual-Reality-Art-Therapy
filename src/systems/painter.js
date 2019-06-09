@@ -12,15 +12,15 @@ AFRAME.registerSystem('painter', {
           common: {
             // 'grip.down': 'undo',
             'trigger.changed': 'paint'
-          }
+          },
 
-          // 'vive-controls': {
-          //   'axis.move': 'changeBrushSizeInc',
+           'vive-controls': {
+             'axis.move': 'changeBrushSizeInc',
           //
           //   Middle button press and release
           //   'trackpad.down': 'aim',
           //   'trackpad.up': 'teleport'
-          // }
+           }
         }
       }
     };

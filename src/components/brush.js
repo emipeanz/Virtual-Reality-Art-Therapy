@@ -4,16 +4,17 @@ AFRAME.registerComponent('brush', {
     color: {type: 'color', default: '#ef2d5e'},
     size: {default: 0.01, min: 0.001, max: 0.3},
     brush: {default: 'smooth'},
-    enabled: { default: true }
+    enabled: { default: true },
+    active: { default: false }
   },
   init: function () {
     var data = this.data;
     this.color = new THREE.Color(data.color);
+    this.active = false;
 
     this.el.emit('brushcolor-changed', {color: this.color});
     this.el.emit('brushsize-changed', {brushSize: data.size});
 
-    this.active = false;
     this.obj = this.el.object3D;
 
     this.currentStroke = null;
@@ -29,18 +30,7 @@ AFRAME.registerComponent('brush', {
     var self = this;
 
     this.previousAxis = 0;
-/*
-    this.el.addEventListener('axismove', function (evt) {
-      if (evt.detail.axis[0] === 0 && evt.detail.axis[1] === 0 || this.previousAxis === evt.detail.axis[1]) {
-        return;
-      }
 
-      this.previousAxis = evt.detail.axis[1];
-      var size = (evt.detail.axis[1] + 1) / 2 * self.schema.size.max;
-
-      self.el.setAttribute('brush', 'size', size);
-    });
-*/
     this.el.addEventListener('undo', function(evt) {
       if (!self.data.enabled) { return; }
       self.system.undo();
@@ -52,19 +42,22 @@ AFRAME.registerComponent('brush', {
       // Trigger
       var value = evt.detail.value;
       self.sizeModifier = value;
-      if (value > 0.1) {
-        if (!self.active) {
+      if (value > 0.1) { //if trigger pressure is above
+        if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
+          self.el.emit('stroke-paint-changed', true);
         }
-      } else {
-        if (self.active) {
-          self.previousEntity = self.currentEntity;
-          self.currentStroke = null;
+      } else {  // trigger pressed, but too lightly
+        if (self.active) {  // if you were just painting
+            self.previousEntity = self.currentEntity;
+            self.currentStroke = null;
+            self.el.emit('stroke-paint-changed', false);
         }
         self.active = false;
       }
-    });
+    })
+
   },
   update: function (oldData) {
     var data = this.data;
@@ -77,6 +70,11 @@ AFRAME.registerComponent('brush', {
     }
   },
   tick: (function () {
+
+    //this.el.addEventListener('axismove', function(evt) {
+    //  console.log(evt)
+    //})
+
     var position = new THREE.Vector3();
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
