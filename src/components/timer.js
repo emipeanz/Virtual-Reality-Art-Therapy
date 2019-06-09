@@ -47,9 +47,21 @@ AFRAME.registerComponent('timer', {
         if (this.strokeActive) {
             this.totalActiveTime = this.getTotalTimeElapsed() - this.totalIdleTime;
         }
-        console.log("total time:", this.getTotalTimeElapsed())
-        console.log("active time: ", this.totalActiveTime)
-        console.log("idle time: ", this.totalIdleTime)
+        console.log("total time:", this.msToTime(this.getTotalTimeElapsed()));
+        console.log("active time: ", this.msToTime(this.totalActiveTime));
+        console.log("idle time: ", this.msToTime(this.totalIdleTime));
         console.log("")
-    }
+    },
+
+    msToTime: function(s) {
+        var ms = s % 1000;
+        s = (s - ms) / 1000;
+        var secs = s % 60;
+        s = (s - secs) / 60;
+        var mins = s % 60;
+        var hrs = (s - mins) / 60;
+
+        return hrs + ':' + mins + ':' + secs + '.' + ms;
+}
+
 })
