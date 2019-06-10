@@ -14,11 +14,7 @@ AFRAME.registerComponent('wedge-generator', {
         var maxLateralReach = 0.5; // Reaching to the left and right
         var maxForwardReach = 0.5; // Reaching forwards
 
-        global.navigator = global.window.navigator;
-        self.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-
-        self.controllerEntity = document.querySelector('#right-hand');
-        console.log(self.controllerEntity.getAttribute('position'));
+        this.userControlWedgeLocation = true;
 
 
         el.sceneEl.addEventListener('generateWedge', function(){
@@ -36,13 +32,21 @@ AFRAME.registerComponent('wedge-generator', {
             var y = Math.random() + 0.5
             var z = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
 
-            var  position = x + " " + y + " " + z
+            global.navigator = global.window.navigator;
+            self.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+
+            self.controllerEntity = document.querySelector('#right-hand');
+
+            var  position = self.controllerEntity.getAttribute('position');
+            position.y = position.y + 0.75;
             height = 0.1;
 
             //Flowers should have between 4 and 6 petals
             var numPetals = Math.round(Math.random() * 2) + 4;
             //Radius is calculated based on number of petals
             var radiusBottom = height *  Math.tan(Math.PI / numPetals);
+
+
 
             wedge.setAttribute("scale", "0.5 1 1")
             wedge.setAttribute("position", position)
@@ -51,6 +55,7 @@ AFRAME.registerComponent('wedge-generator', {
             wedge.setAttribute("opacity", "0.2")
             wedge.setAttribute("geometry" , "radiusBottom:" + radiusBottom);
             wedge.setAttribute('material',  "wireframe:true");
+            wedge.setAttribute('rotation', "0 0 -131.55110976203702");
 
             self.el.sceneEl.appendChild(wedge)
         })
