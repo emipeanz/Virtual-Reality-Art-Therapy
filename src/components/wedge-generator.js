@@ -18,13 +18,18 @@ AFRAME.registerComponent('wedge-generator', {
 
             // var position = Math.random() + " " + Math.random()  + " " + Math.random()
             var  position = x + " " + y + " " + z
-            var height = Math.random() * 0.3 + 0.1
+            //var height = Math.random() * 0.3 + 0.1
+            height = 0.1;
 
-            wedge.setAttribute("scale", "0.04 1 0.05")
+            var numPetals = Math.round(Math.random() * 2) + 4;
+            var radiusBottom = height *  Math.tan(Math.PI / numPetals);
+
+            //wedge.setAttribute("scale", "0.04 1 0.05")
             wedge.setAttribute("position", position)
             wedge.setAttribute("height", height)
-            wedge.setAttribute("color", "#8fabcd")
+            wedge.setAttribute("color", "#ffffff")
             wedge.setAttribute("opacity", "0.2")
+            wedge.setAttribute("geometry" , "radiusBottom:" + radiusBottom);
 
             self.el.sceneEl.appendChild(wedge)
         })
