@@ -12,14 +12,18 @@ AFRAME.registerComponent('wedge-generator', {
         el.sceneEl.addEventListener('generateWedge', function(){
             var wedge = document.createElement('a-cone')
 
-            var x = (Math.random())* (Math.floor(Math.random()*2) == 1 ? 1 : -1);
+            //Generate the x, y and z coordinates randomly in the centre of the screen
+            var x = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
+            // elevate so not on ground
             var y = Math.random() + 0.5
-            var z = (Math.random())* (Math.floor(Math.random()*2) == 1 ? 1 : -1);
+            var z = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
 
             var  position = x + " " + y + " " + z
             height = 0.1;
 
+            //Flowers should have between 4 and 6 petals
             var numPetals = Math.round(Math.random() * 2) + 4;
+            //Radius is calculated based on number of petals
             var radiusBottom = height *  Math.tan(Math.PI / numPetals);
 
             wedge.setAttribute("scale", "0.5 1 1")
@@ -31,7 +35,5 @@ AFRAME.registerComponent('wedge-generator', {
 
             self.el.sceneEl.appendChild(wedge)
         })
-
     },
-
 })
