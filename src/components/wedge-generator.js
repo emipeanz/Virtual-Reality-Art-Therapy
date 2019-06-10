@@ -14,8 +14,9 @@ AFRAME.registerComponent('wedge-generator', {
         var maxLateralReach = 0.5; // Reaching to the left and right
         var maxForwardReach = 0.5; // Reaching forwards
 
-        this.userControlledWedgeLocation = false;
+        this.userControlledWedgeLocation = true;
 
+        this.camera = document.querySelector('#acamera');
 
         el.sceneEl.addEventListener('generateWedge', function(){
             // remove old wedge to make room for new one
@@ -28,6 +29,8 @@ AFRAME.registerComponent('wedge-generator', {
 
             global.navigator = global.window.navigator;
             self.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            self.VRDisplays = navigator.getVRDisplays() ?  navigator.getVRDisplays() : [];
+
 
 
             var  position
@@ -47,7 +50,6 @@ AFRAME.registerComponent('wedge-generator', {
                 position = x + " " + y + " " + z;
             }
 
-
             height = 0.1;
 
             //Flowers should have between 4 and 6 petals
@@ -55,22 +57,27 @@ AFRAME.registerComponent('wedge-generator', {
             //Radius is calculated based on number of petals
             var radiusBottom = height *  Math.tan(Math.PI / numPetals);
 
+            var rotation = self.camera.getAttribute('rotation');
+            rotation.y = rotation.y + 90;
+            rotation.x = 0;
+            rotation.z = 0;
 
-
-            wedge.setAttribute("scale", "0.5 1 1")
+            wedge.setAttribute("scale", "0.1 1 1")
             wedge.setAttribute("position", position)
             wedge.setAttribute("height", height)
             wedge.setAttribute("color", "#ffffff")
             wedge.setAttribute("opacity", "0.2")
             wedge.setAttribute("geometry" , "radiusBottom:" + radiusBottom);
             wedge.setAttribute('material',  "wireframe:true");
-            wedge.setAttribute('rotation', "0 0 -131.55110976203702");
+            wedge.setAttribute('rotation', rotation);
 
             self.el.sceneEl.appendChild(wedge)
         })
     },
     tick: function() {
         self.controllerEntity = document.querySelector('#right-hand');
-        console.log(self.controllerEntity.getAttribute('position'));
+
+        this.camera = document.querySelector('#acamera');
+
     }
 })
