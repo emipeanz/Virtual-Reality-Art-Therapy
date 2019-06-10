@@ -1,8 +1,18 @@
 AFRAME.registerComponent('wedge-generator', {
+
     schema: {  },
 
     init: function(){
         var self = this
 
+        //Set up initial state and variables
+        var data = this.data; //get all the data from the schema.
+        var el = this.el; //get reference to the entity.
+
+        el.sceneEl.addEventListener('generateWedge', function(){
+            console.log("handling wedge generation event")
+        })
+
     },
+
 })
