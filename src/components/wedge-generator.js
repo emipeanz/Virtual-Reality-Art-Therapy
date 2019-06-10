@@ -24,7 +24,7 @@ AFRAME.registerComponent('wedge-generator', {
             var numPetals = Math.round(Math.random() * 2) + 4;
             var radiusBottom = height *  Math.tan(Math.PI / numPetals);
 
-            //wedge.setAttribute("scale", "0.04 1 0.05")
+            wedge.setAttribute("scale", "0.5 1 1")
             wedge.setAttribute("position", position)
             wedge.setAttribute("height", height)
             wedge.setAttribute("color", "#ffffff")
