@@ -10,11 +10,14 @@ AFRAME.registerComponent('wedge-generator', {
         var el = this.el; //get reference to the entity.
 
         el.sceneEl.addEventListener('generateWedge', function(){
-            console.log("handling wedge generation event")
             var wedge = document.createElement('a-cone')
+
+            var position = Math.random() + " " + Math.random() + " " + Math.random()
+            var height = Math.random() * 0.3 + 0.1
+
             wedge.setAttribute("scale", "0.04 1 0.05")
-            wedge.setAttribute("position", "0 1.5 0")
-            wedge.setAttribute("height", "0.1")
+            wedge.setAttribute("position", position)
+            wedge.setAttribute("height", height)
 
             self.el.sceneEl.appendChild(wedge)
         })
