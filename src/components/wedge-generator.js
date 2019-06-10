@@ -18,6 +18,8 @@ AFRAME.registerComponent('wedge-generator', {
             wedge.setAttribute("scale", "0.04 1 0.05")
             wedge.setAttribute("position", position)
             wedge.setAttribute("height", height)
+            wedge.setAttribute("color", "#8fabcd")
+            wedge.setAttribute("opacity", "0.2")
 
             self.el.sceneEl.appendChild(wedge)
         })
