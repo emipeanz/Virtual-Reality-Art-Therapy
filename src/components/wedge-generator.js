@@ -9,6 +9,11 @@ AFRAME.registerComponent('wedge-generator', {
         var data = this.data; //get all the data from the schema.
         var el = this.el; //get reference to the entity.
 
+        //Bounding box coordinates (m) (These would be set by therapist input)
+        var maxUpwardsReach = 0.5; // Reaching up
+        var maxLateralReach = 0.5; // Reaching to the left and right
+        var maxForwardReach = 0.5; // Reaching forwards
+
         el.sceneEl.addEventListener('generateWedge', function(){
             var wedge = document.createElement('a-cone')
 
