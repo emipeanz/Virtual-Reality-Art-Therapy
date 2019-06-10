@@ -31,13 +31,11 @@ AFRAME.registerComponent('wedge-generator', {
             self.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
             self.VRDisplays = navigator.getVRDisplays() ?  navigator.getVRDisplays() : [];
 
-
-
+            // Depending on the boolean variable, let the users place the wedge where they want, or randomly
             var  position
             if(self.userControlledWedgeLocation){
-
+                // Position wedge relative to position of controller
                 self.controllerEntity = document.querySelector('#right-hand');
-
                 var  position = self.controllerEntity.getAttribute('position');
                 position.y = position.y + 0.75;
             }
@@ -50,10 +48,11 @@ AFRAME.registerComponent('wedge-generator', {
                 position = x + " " + y + " " + z;
             }
 
-            height = 0.1;
+            // Height is between 0.1 and 0.7
+            height = Math.random() * 0.4 + 0.1;
 
-            //Flowers should have between 4 and 6 petals
-            var numPetals = Math.round(Math.random() * 2) + 4;
+            //Flowers should have between 4 and 8 petals
+            var numPetals = Math.round(Math.random() * 4) + 4;
             //Radius is calculated based on number of petals
             var radiusBottom = height *  Math.tan(Math.PI / numPetals);
 
@@ -76,8 +75,6 @@ AFRAME.registerComponent('wedge-generator', {
     },
     tick: function() {
         self.controllerEntity = document.querySelector('#right-hand');
-
         this.camera = document.querySelector('#acamera');
-
     }
 })
