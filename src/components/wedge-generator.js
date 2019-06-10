@@ -14,7 +14,20 @@ AFRAME.registerComponent('wedge-generator', {
         var maxLateralReach = 0.5; // Reaching to the left and right
         var maxForwardReach = 0.5; // Reaching forwards
 
+        global.navigator = global.window.navigator;
+        self.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+
+        self.controllerEntity = document.querySelector('#right-hand');
+        console.log(self.controllerEntity.getAttribute('position'));
+
+
         el.sceneEl.addEventListener('generateWedge', function(){
+            // remove old wedge to make room for new one
+            var oldWedge = document.querySelector('a-cone');
+            if(oldWedge !== null){
+                oldWedge.parentElement.removeChild(oldWedge);
+            }
+
             var wedge = document.createElement('a-cone')
 
             //Generate the x, y and z coordinates randomly in the centre of the screen
@@ -37,8 +50,13 @@ AFRAME.registerComponent('wedge-generator', {
             wedge.setAttribute("color", "#ffffff")
             wedge.setAttribute("opacity", "0.2")
             wedge.setAttribute("geometry" , "radiusBottom:" + radiusBottom);
+            wedge.setAttribute('material',  "wireframe:true");
 
             self.el.sceneEl.appendChild(wedge)
         })
     },
+    tick: function() {
+        self.controllerEntity = document.querySelector('#right-hand');
+        console.log(self.controllerEntity.getAttribute('position'));
+    }
 })
