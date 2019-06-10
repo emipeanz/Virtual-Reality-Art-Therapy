@@ -23,6 +23,7 @@ require('./components/ui.js');
 require('./components/ui-raycaster.js');
 
 require('./components/metrics.js');
+require('./components/wedge-generator.js');
 
 require('./brushes/line.js');
 require('./brushes/stamp.js');

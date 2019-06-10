@@ -18,8 +18,8 @@ AFRAME.registerSystem('painter', {
              'axis.move': 'changeBrushSizeInc',
           //
           //   Middle button press and release
-          //   'trackpad.down': 'aim',
-          //   'trackpad.up': 'teleport'
+          //   'trackpad.down': 'generateWedge',
+            'trackpad.up': 'generateWedge'
            }
         }
       }
