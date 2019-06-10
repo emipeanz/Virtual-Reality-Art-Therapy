@@ -14,7 +14,7 @@ AFRAME.registerComponent('wedge-generator', {
         var maxLateralReach = 0.5; // Reaching to the left and right
         var maxForwardReach = 0.5; // Reaching forwards
 
-        this.userControlWedgeLocation = true;
+        this.userControlledWedgeLocation = false;
 
 
         el.sceneEl.addEventListener('generateWedge', function(){
@@ -26,19 +26,28 @@ AFRAME.registerComponent('wedge-generator', {
 
             var wedge = document.createElement('a-cone')
 
-            //Generate the x, y and z coordinates randomly in the centre of the screen
-            var x = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
-            // elevate so not on ground
-            var y = Math.random() + 0.5
-            var z = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
-
             global.navigator = global.window.navigator;
             self.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
 
-            self.controllerEntity = document.querySelector('#right-hand');
 
-            var  position = self.controllerEntity.getAttribute('position');
-            position.y = position.y + 0.75;
+            var  position
+            if(self.userControlledWedgeLocation){
+
+                self.controllerEntity = document.querySelector('#right-hand');
+
+                var  position = self.controllerEntity.getAttribute('position');
+                position.y = position.y + 0.75;
+            }
+            else{
+                //Generate the x, y and z coordinates randomly in the centre of the screen
+                var x = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
+                // elevate so not on ground
+                var y = Math.random() + 0.5
+                var z = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
+                position = x + " " + y + " " + z;
+            }
+
+
             height = 0.1;
 
             //Flowers should have between 4 and 6 petals
