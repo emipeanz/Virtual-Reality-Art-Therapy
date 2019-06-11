@@ -3,7 +3,7 @@ AFRAME.registerComponent('wedge-generator', {
     schema: {  },
 
     init: function(){
-        var self = this
+        var self = this;
 
         //Set up initial state and variables
         var data = this.data; //get all the data from the schema.
@@ -13,6 +13,11 @@ AFRAME.registerComponent('wedge-generator', {
         var maxUpwardsReach = 0.5; // Reaching up
         var maxLateralReach = 0.5; // Reaching to the left and right
         var maxForwardReach = 0.5; // Reaching forwards
+
+        //Resting position of controller, used as the origin of the bounding box
+        var startXPos = 0;
+        var startYPos = 0;
+        var startZPos = 0;
 
         this.userControlledWedgeLocation = true;
 
@@ -48,7 +53,7 @@ AFRAME.registerComponent('wedge-generator', {
                 position = x + " " + y + " " + z;
             }
 
-            // Height is between 0.1 and 0.7
+            // Height is between 0.1 and 0.5
             height = Math.random() * 0.4 + 0.1;
 
             //Flowers should have between 4 and 8 petals
@@ -74,7 +79,23 @@ AFRAME.registerComponent('wedge-generator', {
         })
     },
     tick: function() {
+        // Track the position of the headset
         self.controllerEntity = document.querySelector('#right-hand');
         this.camera = document.querySelector('#acamera');
+
+        // If the resting position of the controller is not set, set when controller position defined
+        if (this.startXPos === undefined) {
+            // Track the position of the controller
+            this.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            this.controllerEntity = document.querySelector('#right-hand');
+            var position = self.controllerEntity.getAttribute('position');
+
+            // Set the origin position to the current position of the controller
+            if (position.x !== 0) {
+                this.startXPos = position.x;
+                this.startYPos = position.y + 0.75;
+                this.startZPos = position.z;
+            }
+        }
     }
 })
