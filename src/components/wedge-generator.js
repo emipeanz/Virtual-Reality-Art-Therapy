@@ -20,7 +20,7 @@ AFRAME.registerComponent('wedge-generator', {
 
         this.controllerPosition = new THREE.Vector3();
 
-        this.userControlledWedgeLocation = true;
+        this.userControlledWedgeLocation = false;
 
         this.camera = document.querySelector('#acamera');
 
@@ -31,8 +31,7 @@ AFRAME.registerComponent('wedge-generator', {
         el.sceneEl.addEventListener('generateWedge', function(){
             // Set origin of bounded box to location of controller on first click
             if (!self.originSet) {
-                console.log("SETTING ORIGIN TO ", self.controllerPosition);
-                self.originControllerPosition = self.controllerPosition;
+                self.originControllerPosition = self.controllerPosition.clone();
                 self.originSet = true;
 
                 var box = document.createElement('a-box')
@@ -50,8 +49,6 @@ AFRAME.registerComponent('wedge-generator', {
                 box.setAttribute('position', boxPosition);
 
                 self.el.sceneEl.appendChild(box)
-
-                console.log("putting box in")
             }
             // generate a wedge
             else{
@@ -74,10 +71,10 @@ AFRAME.registerComponent('wedge-generator', {
                 }
                 //Generate the x, y and z coordinates randomly in the centre of the screen
                 else{
-                    var x = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
-                    // elevate so not on ground
-                    var y = Math.random() + 0.5
-                    var z = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
+                    var x = Math.random() * self.maxXReach + self.originControllerPosition.x - self.maxXReach/2;
+                    var y = Math.random() * self.maxYReach + self.originControllerPosition.y;
+                    var z = self.originControllerPosition.z - Math.random() * self.maxZReach;
+
                     var position = x + " " + y + " " + z;
                 }
 
