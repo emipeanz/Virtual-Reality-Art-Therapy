@@ -66,12 +66,13 @@ AFRAME.registerComponent('brush', {
             self.previousEntity = self.currentEntity;
             self.currentStroke = null;
             self.el.emit('stroke-paint-changed', false);
+            if(self.hue !== undefined && self.sat !== undefined && self.light !== undefined){
+                self.updateColor();
+                self.updateBrushSize();
+            }
         }
         self.active = false;
-        if(self.hue !== undefined && self.sat !== undefined && self.light !== undefined){
-          self.updateColor();
-          self.updateBrushSize();
-        }
+
       }
     })
 
@@ -164,5 +165,6 @@ AFRAME.registerComponent('brush', {
     // Brush size can be anywhere between the minimum possible and current maximum brush size.
     var size = Math.random() * (this.currentMaxBrushSize - this.minBrushSize) + this.minBrushSize;
     this.el.emit('brushsize-changed', {size: size});
+    this.el.setAttribute('brush', 'size', size);
   }
 });
