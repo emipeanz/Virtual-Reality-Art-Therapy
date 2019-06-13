@@ -26,7 +26,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.camera = document.querySelector('#acamera');
 
         el.sceneEl.addEventListener('position-changed', function (evt) {
-            if (evt.detail.position.x === 0 && evt.detail.position.y === 0 && evt.detail.position.z === 0) {
+            if (evt.detail.position.x !== 0 && evt.detail.position.y !== 0 && evt.detail.position.z !== 0) {
                 self.controllerPosition = evt.detail.position;
             }
         })
@@ -45,12 +45,9 @@ AFRAME.registerComponent('wedge-generator', {
             self.VRDisplays = navigator.getVRDisplays() ?  navigator.getVRDisplays() : [];
 
             // Depending on the boolean variable, let the users place the wedge where they want, or randomly
-            var  position
             if(self.userControlledWedgeLocation){
                 // Position wedge relative to position of controller
-                self.controllerEntity = document.querySelector('#right-hand');
-                var  position = self.controllerEntity.getAttribute('position');
-                position.y = position.y + 0.75;
+                var position = self.controllerPosition;
             }
             else{
                 //Generate the x, y and z coordinates randomly in the centre of the screen
@@ -58,7 +55,7 @@ AFRAME.registerComponent('wedge-generator', {
                 // elevate so not on ground
                 var y = Math.random() + 0.5
                 var z = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
-                position = x + " " + y + " " + z;
+                var position = x + " " + y + " " + z;
             }
 
             // Height is between 0.1 and 0.5
