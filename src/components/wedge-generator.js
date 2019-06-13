@@ -18,7 +18,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.originSet = false;
 
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
-        this.userControlledWedgeLocation = false;
+        this.userControlledWedgeLocation = true;
 
         //Position of the headset and controller are tracked
         this.camera = document.querySelector('#acamera');

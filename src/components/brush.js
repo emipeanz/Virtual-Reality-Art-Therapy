@@ -11,12 +11,6 @@ AFRAME.registerComponent('brush', {
   },
   init: function () {
 
-    this.RGBEnum = {
-      RED: 1,
-      GREEN: 2,
-      BLUE: 3
-    };
-
     var data = this.data;
     this.color = new THREE.Color(data.color);
     this.position = new THREE.Vector3();
@@ -39,8 +33,7 @@ AFRAME.registerComponent('brush', {
     this.drawing = false;
 
     var self = this;
-    this.colorHue;
-    this.getRandomColor();
+    this.setRandomColor();
 
     this.previousAxis = 0;
 
@@ -69,16 +62,14 @@ AFRAME.registerComponent('brush', {
             self.el.emit('stroke-paint-changed', false);
         }
         self.active = false;
-        console.log('     BEFORE CHECK = ', self.red, ' ', self.green, ' ', self.blue);
-        if(self.red !== undefined && self.blue !== undefined && self.green !== undefined){
-          console.log('in if statement');
+        if(self.hue !== undefined && self.sat !== undefined && self.light !== undefined){
           self.changeHue();
         }
       }
     })
 
     this.el.addEventListener('generateWedge', function (){
-      self.color.set(self.getRandomColor());
+      self.color.set(self.setRandomColor());
       self.el.emit('brushcolor-changed', {color: self.color});
 
     })
@@ -96,9 +87,6 @@ AFRAME.registerComponent('brush', {
   },
   tick: (function () {
 
-    //this.el.addEventListener('axismove', function(evt) {
-    //  console.log(evt)
-    //})
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
 
@@ -124,54 +112,25 @@ AFRAME.registerComponent('brush', {
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
   },
 
-  getRandomColor: function() {
-    this.red = Math.floor(Math.random() * 155 + 100);
-    this.green = Math.floor(Math.random() * 155 + 100);
-    this.blue = Math.floor(Math.random() * 155 + 100);
-
-    console.log(' RGB = ', this.red, ' ', this.green, ' ', this.blue);
-
-    if((this.red < this.blue) && (this.red > this.green) ||
-        (this.red > this.blue) && (this.red < this.green)){
-      this.colorHue = this.RGBEnum.RED;
-    }
-    else if((this.blue < this.green) && (this.blue > this.red) ||
-        (this.blue > this.green) && (this.blue < this.red)){
-      this.colorHue = this.RGBEnum.BLUE;
-    }
-    else{
-      this.colorHue = this.RGBEnum.GREEN;
-    }
-    this.updateColor(this.red, this.green, this.blue);
+  // Function finds a random color, and sets the hue variable which is the color 'theme' for the petal
+  setRandomColor: function() {
+    this.currentHue = Math.floor(360 * Math.random())
+    this.hue = this.currentHue;
+    this.sat = Math.floor(25 + 70 * Math.random());
+    this.light = Math.floor(10 + 45 * Math.random());
+    this.updateColor(this.hue, this.sat, this.light);
   },
 
+  // Changes the stroke color based on what the hue is
   changeHue: function() {
-    console.log('changing hue');
-    if(this.colorHue === this.RGBEnum.RED){
-      this.red = Math.floor(Math.random() * 255);
-    }
-    else if(this.colorHue === this.RGBEnum.GREEN){
-      this.green = Math.floor(Math.random() * 255);
-    }
-    else{
-      this.blue = Math.floor(Math.random() * 255);
-    }
-    console.log('     NEW RGB = ', this.red, ' ', this.green, ' ', this.blue);
-    this.updateColor(this.red, this.green, this.blue);
+    var nextHue = Math.floor(Math.random() * 60 + this.currentHue - 30);
+    this.hue = Math.min(Math.max(nextHue, 0), 360);
+    this.updateColor(this.hue, this.sat, this.light);
   },
 
-  // componentToHex: function(c) {
-  //   var hex = c.toString(16);
-  //   return hex.length === 1 ? "0" + hex : hex;
-  // },
-  //
-  // rgbToHex: function(r, g, b) {
-  // return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
-  // },
-
-  updateColor: function(red, green, blue){
-    var color = new THREE.Color('rgb(' + red + ', ' + green + ', ' + blue + ')');
-    console.log('color color = ', color);
+  // Updates the brush color
+  updateColor: function(hue, sat, light){
+    var color = new THREE.Color('hsl(' + hue + ', ' + sat + '%, ' + light + '%)');
     this.color.set(color);
     this.el.emit('brushcolor-changed', {color: color});
   }
