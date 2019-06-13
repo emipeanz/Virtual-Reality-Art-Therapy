@@ -94,8 +94,8 @@ AFRAME.registerComponent('wedge-generator', {
             var position = this.generateRandomBoundedCoordinates();
         }
 
-        // Height is between 0.1 and 0.5
-        height = Math.random() * 0.4 + 0.1;
+        // Height is between 0.1 and 0.3
+        height = Math.random() * 0.2 + 0.1;
 
         //Flowers should have between 4 and 10 petals
         var numPetals = Math.round(Math.random() * 6) + 4;
@@ -103,10 +103,11 @@ AFRAME.registerComponent('wedge-generator', {
         var radiusBottom = height *  Math.tan(Math.PI / numPetals);
 
         var rotation = this.camera.getAttribute('rotation');
-        rotation.x = 0;
+        rotation.x = Math.random() * 360;
         rotation.z = 0;
+        rotation.y = rotation.y + 90;
 
-        wedge.setAttribute("scale", "0.1 1 1")
+        wedge.setAttribute("scale", "0.2 1 1")
         wedge.setAttribute("position", position)
         wedge.setAttribute("height", height)
         wedge.setAttribute("color", "#ffffff")
