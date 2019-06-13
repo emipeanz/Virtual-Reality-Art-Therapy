@@ -19,9 +19,17 @@ AFRAME.registerComponent('wedge-generator', {
         var startYPos = 0;
         var startZPos = 0;
 
+        this.controllerPosition = new THREE.Vector3();
+
         this.userControlledWedgeLocation = true;
 
         this.camera = document.querySelector('#acamera');
+
+        el.sceneEl.addEventListener('position-changed', function (evt) {
+            if (evt.detail.position.x === 0 && evt.detail.position.y === 0 && evt.detail.position.z === 0) {
+                self.controllerPosition = evt.detail.position;
+            }
+        })
 
         el.sceneEl.addEventListener('generateWedge', function(){
             // remove old wedge to make room for new one
@@ -76,7 +84,7 @@ AFRAME.registerComponent('wedge-generator', {
             wedge.setAttribute('rotation', rotation);
 
             self.el.sceneEl.appendChild(wedge)
-        })
+    })
     },
     tick: function() {
         // Track the position of the headset
