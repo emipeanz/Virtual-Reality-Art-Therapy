@@ -1,7 +1,8 @@
 /* globals AFRAME THREE */
+
 AFRAME.registerComponent('brush', {
   schema: {
-    color: {type: 'color', default: '#ef2d5e'},
+    color: {type: 'color', default: '#91f9ff'},
     size: {default: 0.01, min: 0.001, max: 0.3},
     brush: {default: 'smooth'},
     enabled: { default: true },
@@ -9,6 +10,7 @@ AFRAME.registerComponent('brush', {
     position: { default: "1 1 1"}
   },
   init: function () {
+
     var data = this.data;
     this.color = new THREE.Color(data.color);
     this.position = new THREE.Vector3();
@@ -31,6 +33,7 @@ AFRAME.registerComponent('brush', {
     this.drawing = false;
 
     var self = this;
+    this.setRandomColor();
 
     this.previousAxis = 0;
 
@@ -59,7 +62,16 @@ AFRAME.registerComponent('brush', {
             self.el.emit('stroke-paint-changed', false);
         }
         self.active = false;
+        if(self.hue !== undefined && self.sat !== undefined && self.light !== undefined){
+          self.changeHue();
+        }
       }
+    })
+
+    this.el.addEventListener('generateWedge', function (){
+      self.color.set(self.setRandomColor());
+      self.el.emit('brushcolor-changed', {color: self.color});
+
     })
 
   },
@@ -75,9 +87,6 @@ AFRAME.registerComponent('brush', {
   },
   tick: (function () {
 
-    //this.el.addEventListener('axismove', function(evt) {
-    //  console.log(evt)
-    //})
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
 
@@ -96,9 +105,33 @@ AFRAME.registerComponent('brush', {
       }
     };
   })(),
+
   startNewStroke: function () {
     document.getElementById('ui_paint').play();
     this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size);
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
+  },
+
+  // Function finds a random color, and sets the hue variable which is the color 'theme' for the petal
+  setRandomColor: function() {
+    this.currentHue = Math.floor(360 * Math.random())
+    this.hue = this.currentHue;
+    this.sat = Math.floor(25 + 70 * Math.random());
+    this.light = Math.floor(10 + 45 * Math.random());
+    this.updateColor(this.hue, this.sat, this.light);
+  },
+
+  // Changes the stroke color based on what the hue is
+  changeHue: function() {
+    var nextHue = Math.floor(Math.random() * 60 + this.currentHue - 30);
+    this.hue = Math.min(Math.max(nextHue, 0), 360);
+    this.updateColor(this.hue, this.sat, this.light);
+  },
+
+  // Updates the brush color
+  updateColor: function(hue, sat, light){
+    var color = new THREE.Color('hsl(' + hue + ', ' + sat + '%, ' + light + '%)');
+    this.color.set(color);
+    this.el.emit('brushcolor-changed', {color: color});
   }
 });
