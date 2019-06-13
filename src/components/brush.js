@@ -1,4 +1,5 @@
 /* globals AFRAME THREE */
+
 AFRAME.registerComponent('brush', {
   schema: {
     color: {type: 'color', default: '#91f9ff'},
@@ -9,6 +10,13 @@ AFRAME.registerComponent('brush', {
     position: { default: "1 1 1"}
   },
   init: function () {
+
+    this.RGBEnum = {
+      RED: 1,
+      GREEN: 2,
+      BLUE: 3
+    };
+
     var data = this.data;
     this.color = new THREE.Color(data.color);
     this.position = new THREE.Vector3();
@@ -32,6 +40,7 @@ AFRAME.registerComponent('brush', {
 
     var self = this;
     this.colorHue;
+    this.getRandomColor();
 
     this.previousAxis = 0;
 
@@ -60,13 +69,16 @@ AFRAME.registerComponent('brush', {
             self.el.emit('stroke-paint-changed', false);
         }
         self.active = false;
+        console.log('     BEFORE CHECK = ', self.red, ' ', self.green, ' ', self.blue);
+        if(self.red !== undefined && self.blue !== undefined && self.green !== undefined){
+          console.log('in if statement');
+          self.changeHue();
+        }
       }
     })
 
     this.el.addEventListener('generateWedge', function (){
-      console.log('got message tochange color based on generate wedge');
       self.color.set(self.getRandomColor());
-      console.log('color now = ', self.color);
       self.el.emit('brushcolor-changed', {color: self.color});
 
     })
@@ -105,17 +117,62 @@ AFRAME.registerComponent('brush', {
       }
     };
   })(),
+
   startNewStroke: function () {
     document.getElementById('ui_paint').play();
     this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size);
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
   },
+
   getRandomColor: function() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
+    this.red = Math.floor(Math.random() * 155 + 100);
+    this.green = Math.floor(Math.random() * 155 + 100);
+    this.blue = Math.floor(Math.random() * 155 + 100);
+
+    console.log(' RGB = ', this.red, ' ', this.green, ' ', this.blue);
+
+    if((this.red < this.blue) && (this.red > this.green) ||
+        (this.red > this.blue) && (this.red < this.green)){
+      this.colorHue = this.RGBEnum.RED;
+    }
+    else if((this.blue < this.green) && (this.blue > this.red) ||
+        (this.blue > this.green) && (this.blue < this.red)){
+      this.colorHue = this.RGBEnum.BLUE;
+    }
+    else{
+      this.colorHue = this.RGBEnum.GREEN;
+    }
+    this.updateColor(this.red, this.green, this.blue);
+  },
+
+  changeHue: function() {
+    console.log('changing hue');
+    if(this.colorHue === this.RGBEnum.RED){
+      this.red = Math.floor(Math.random() * 255);
+    }
+    else if(this.colorHue === this.RGBEnum.GREEN){
+      this.green = Math.floor(Math.random() * 255);
+    }
+    else{
+      this.blue = Math.floor(Math.random() * 255);
+    }
+    console.log('     NEW RGB = ', this.red, ' ', this.green, ' ', this.blue);
+    this.updateColor(this.red, this.green, this.blue);
+  },
+
+  // componentToHex: function(c) {
+  //   var hex = c.toString(16);
+  //   return hex.length === 1 ? "0" + hex : hex;
+  // },
+  //
+  // rgbToHex: function(r, g, b) {
+  // return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+  // },
+
+  updateColor: function(red, green, blue){
+    var color = new THREE.Color('rgb(' + red + ', ' + green + ', ' + blue + ')');
+    console.log('color color = ', color);
+    this.color.set(color);
+    this.el.emit('brushcolor-changed', {color: color});
   }
-  return color;
-}
 });
