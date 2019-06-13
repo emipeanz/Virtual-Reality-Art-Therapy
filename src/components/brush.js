@@ -5,15 +5,18 @@ AFRAME.registerComponent('brush', {
     size: {default: 0.01, min: 0.001, max: 0.3},
     brush: {default: 'smooth'},
     enabled: { default: true },
-    active: { default: false }
+    active: { default: false },
+    position: { default: "1 1 1"}
   },
   init: function () {
     var data = this.data;
     this.color = new THREE.Color(data.color);
+    this.position = new THREE.Vector3();
     this.active = false;
 
     this.el.emit('brushcolor-changed', {color: this.color});
     this.el.emit('brushsize-changed', {brushSize: data.size});
+    this.el.emit('position-changed', {position: data.position});
 
     this.obj = this.el.object3D;
 
@@ -30,6 +33,7 @@ AFRAME.registerComponent('brush', {
     var self = this;
 
     this.previousAxis = 0;
+
 
     this.el.addEventListener('undo', function(evt) {
       if (!self.data.enabled) { return; }
@@ -74,16 +78,21 @@ AFRAME.registerComponent('brush', {
     //this.el.addEventListener('axismove', function(evt) {
     //  console.log(evt)
     //})
-
-    var position = new THREE.Vector3();
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
 
     return function tick (time, delta) {
+      this.obj.matrixWorld.decompose(this.position, rotation, scale);
+      if ((this.position.x !== 0 && this.position.y !== 0 && this.position.z !== 0) &&
+          (this.position.x !== 1 && this.position.y !== 1 && this.position.z !== 1) &&
+          (this.position.x !== undefined && this.position.y !== undefined && this.position.z !== undefined)){
+        this.el.emit('position-changed', {position: this.position});
+      }
+
+
       if (this.currentStroke && this.active) {
-        this.obj.matrixWorld.decompose(position, rotation, scale);
-        var pointerPosition = this.system.getPointerPosition(position, rotation);
-        this.currentStroke.addPoint(position, rotation, pointerPosition, this.sizeModifier, time);
+        var pointerPosition = this.system.getPointerPosition(this.position, rotation);
+        this.currentStroke.addPoint(this.position, rotation, pointerPosition, this.sizeModifier, time);
       }
     };
   })(),
