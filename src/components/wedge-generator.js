@@ -25,21 +25,19 @@ AFRAME.registerComponent('wedge-generator', {
         this.camera = document.querySelector('#acamera');
 
         el.sceneEl.addEventListener('position-changed', function (evt) {
-            if ((evt.detail.position.x !== 0 && evt.detail.position.y !== 0 && evt.detail.position.z !== 0) &&
-                (evt.detail.position.x !== 1 && evt.detail.position.y !== 1 && evt.detail.position.z !== 1) &&
-                (evt.detail.position.x !== undefined && evt.detail.position.y !== undefined && evt.detail.position.z !== undefined)) {
-                self.controllerPosition = evt.detail.position;
-            }
-        })
+            self.controllerPosition = evt.detail.position;
+        });
 
         el.sceneEl.addEventListener('generateWedge', function(){
-            // remove old wedge to make room for new one
+            // Set origin of bounded box to location of controller on first click
             if (!self.originSet) {
                 console.log("SETTING ORIGIN TO ", self.controllerPosition);
                 self.originControllerPosition = self.controllerPosition;
                 self.originSet = true;
             }
+            // else make the wedge according to location of the bounded box
             else{
+                // remove old wedge to make room for new one
                 var oldWedge = document.querySelector('a-cone');
                 if(oldWedge !== null){
                     oldWedge.parentElement.removeChild(oldWedge);

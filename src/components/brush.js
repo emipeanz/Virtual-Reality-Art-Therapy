@@ -83,7 +83,12 @@ AFRAME.registerComponent('brush', {
 
     return function tick (time, delta) {
       this.obj.matrixWorld.decompose(this.position, rotation, scale);
-      this.el.emit('position-changed', {position: this.position});
+      if ((this.position.x !== 0 && this.position.y !== 0 && this.position.z !== 0) &&
+          (this.position.x !== 1 && this.position.y !== 1 && this.position.z !== 1) &&
+          (this.position.x !== undefined && this.position.y !== undefined && this.position.z !== undefined)){
+        this.el.emit('position-changed', {position: this.position});
+      }
+
 
       if (this.currentStroke && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
