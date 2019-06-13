@@ -1,7 +1,7 @@
 /* globals AFRAME THREE */
 AFRAME.registerComponent('brush', {
   schema: {
-    color: {type: 'color', default: '#ef2d5e'},
+    color: {type: 'color', default: '#91f9ff'},
     size: {default: 0.01, min: 0.001, max: 0.3},
     brush: {default: 'smooth'},
     enabled: { default: true },
@@ -31,6 +31,7 @@ AFRAME.registerComponent('brush', {
     this.drawing = false;
 
     var self = this;
+    this.colorHue;
 
     this.previousAxis = 0;
 
@@ -60,6 +61,14 @@ AFRAME.registerComponent('brush', {
         }
         self.active = false;
       }
+    })
+
+    this.el.addEventListener('generateWedge', function (){
+      console.log('got message tochange color based on generate wedge');
+      self.color.set(self.getRandomColor());
+      console.log('color now = ', self.color);
+      self.el.emit('brushcolor-changed', {color: self.color});
+
     })
 
   },
@@ -100,5 +109,13 @@ AFRAME.registerComponent('brush', {
     document.getElementById('ui_paint').play();
     this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size);
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
+  },
+  getRandomColor: function() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
   }
+  return color;
+}
 });
