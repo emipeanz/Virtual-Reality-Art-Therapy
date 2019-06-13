@@ -15,7 +15,7 @@ AFRAME.registerSystem('painter', {
           },
 
            'vive-controls': {
-             'axis.move': 'changeBrushSizeInc',
+             // 'axis.move': 'changeBrushSizeInc',
           //
           //   Middle button press and release
           //   'trackpad.down': 'generateWedge',

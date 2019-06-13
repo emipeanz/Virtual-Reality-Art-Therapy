@@ -35,8 +35,14 @@ AFRAME.registerComponent('brush', {
     var self = this;
     this.setRandomColor();
 
-    this.previousAxis = 0;
+    this.currentMaxBrushSize = 0.07;
+    this.maxBrushSize = 0.07;
+    this.minBrushSize = 0.004;
 
+    this.brushSizeScaleFactor;
+    this.brushSizeScalingOffset;
+
+    this.previousAxis = 0;
 
     this.el.addEventListener('undo', function(evt) {
       if (!self.data.enabled) { return; }
@@ -63,18 +69,18 @@ AFRAME.registerComponent('brush', {
         }
         self.active = false;
         if(self.hue !== undefined && self.sat !== undefined && self.light !== undefined){
-          self.changeHue();
+          self.updateColor();
+          self.updateBrushSize();
         }
       }
     })
 
-    this.el.addEventListener('generateWedge', function (){
-      self.color.set(self.setRandomColor());
-      self.el.emit('brushcolor-changed', {color: self.color});
-
+    this.el.sceneEl.addEventListener('update-brush', function(evt){
+      self.setRandomColor();
+      self.setMaxBrushSize(evt.detail.data);
     })
-
   },
+
   update: function (oldData) {
     var data = this.data;
     if (oldData.color !== data.color) {
@@ -85,8 +91,8 @@ AFRAME.registerComponent('brush', {
       this.el.emit('brushsize-changed', {size: data.size});
     }
   },
-  tick: (function () {
 
+  tick: (function () {
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
 
@@ -97,7 +103,6 @@ AFRAME.registerComponent('brush', {
           (this.position.x !== undefined && this.position.y !== undefined && this.position.z !== undefined)){
         this.el.emit('position-changed', {position: this.position});
       }
-
 
       if (this.currentStroke && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
@@ -117,21 +122,47 @@ AFRAME.registerComponent('brush', {
     this.currentHue = Math.floor(360 * Math.random())
     this.hue = this.currentHue;
     this.sat = Math.floor(25 + 70 * Math.random());
-    this.light = Math.floor(10 + 45 * Math.random());
-    this.updateColor(this.hue, this.sat, this.light);
+    this.light = Math.floor(40 + 45 * Math.random());
+    this.setColor(this.hue, this.sat, this.light);
   },
 
   // Changes the stroke color based on what the hue is
-  changeHue: function() {
+  updateColor: function() {
     var nextHue = Math.floor(Math.random() * 60 + this.currentHue - 30);
     this.hue = Math.min(Math.max(nextHue, 0), 360);
-    this.updateColor(this.hue, this.sat, this.light);
+    this.setColor(this.hue, this.sat, this.light);
   },
 
   // Updates the brush color
-  updateColor: function(hue, sat, light){
+  setColor: function(hue, sat, light){
     var color = new THREE.Color('hsl(' + hue + ', ' + sat + '%, ' + light + '%)');
     this.color.set(color);
     this.el.emit('brushcolor-changed', {color: color});
+  },
+
+  // method to update the max brush size every time a new wedge is placed - it is proportional to the wedge size
+  setMaxBrushSize: function(data){
+    if (this.brushSizeScaleFactor === undefined) {
+      // Constants must be defined in order to scale the max and min areas with the max and min brush sizes
+      const maxArea = Math.pow(data.maxHeight, 2 )* Math.tan( Math.PI / data.minPetalNum);
+      const minArea = Math.pow(data.minHeight, 2) * Math.tan(Math.PI / data.maxPetalNum);
+
+      this.brushSizeScaleFactor = (this.minBrushSize - this.maxBrushSize) / (minArea - maxArea);
+      this.brushSizeScalingOffset = this.minBrushSize - minArea * this.brushSizeScaleFactor;
+    }
+
+    const area = data.currentHeight * data.currentRadius;
+    // The maximum possible brush size for the current wedge is proportional to the size of the wedge
+    this.currentMaxBrushSize = this.brushSizeScaleFactor * area + this.brushSizeScalingOffset;
+
+    this.updateBrushSize();
+  },
+
+  // method for updating a specific brush size every stroke, related to max and min brush size and is a random size
+  // between the two
+  updateBrushSize: function(){
+    // Brush size can be anywhere between the minimum possible and current maximum brush size.
+    var size = Math.random() * (this.currentMaxBrushSize - this.minBrushSize) + this.minBrushSize;
+    this.el.emit('brushsize-changed', {size: size});
   }
 });

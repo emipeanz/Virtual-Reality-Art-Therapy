@@ -1,12 +1,22 @@
 AFRAME.registerComponent('wedge-generator', {
 
-    schema: {  },
+    schema: {
+        minHeight: { default: 0.1 },
+        maxHeight: { default: 0.3 },
+        minPetalNum: { default: 4 },
+        maxPetalNum: { default: 10 },
+        currentHeight: { default: 0.1 },
+        currentRadius: { default: 0.1 }
+    },
 
     init: function(){
         var self = this;
+        var data = this.data;
 
         //Set up initial state and variables
         var el = this.el; //get reference to the entity.
+
+        el.sceneEl.emit('update-brush', {data: this.data});
 
         //Bounding box coordinates (m) (These would be set by therapist input)
         this.maxXReach = 0.3; // Reaching to the left and right
@@ -95,12 +105,12 @@ AFRAME.registerComponent('wedge-generator', {
         }
 
         // Height is between 0.1 and 0.3
-        height = Math.random() * 0.2 + 0.1;
+        this.data.currentHeight = Math.random() * (this.data.maxHeight - this.data.minHeight) + this.data.minHeight;
 
         //Flowers should have between 4 and 10 petals
-        var numPetals = Math.round(Math.random() * 6) + 4;
+        var numPetals = Math.round(Math.random() * (this.data.maxPetalNum - this.data.minPetalNum)) + this.data.minPetalNum;
         //Radius is calculated based on number of petals
-        var radiusBottom = height *  Math.tan(Math.PI / numPetals);
+        this.data.currentRadius = this.data.currentHeight *  Math.tan(Math.PI / numPetals);
 
         var rotation = this.camera.getAttribute('rotation');
         rotation.x = Math.random() * 360;
@@ -109,14 +119,18 @@ AFRAME.registerComponent('wedge-generator', {
 
         wedge.setAttribute("scale", "0.2 1 1")
         wedge.setAttribute("position", position)
-        wedge.setAttribute("height", height)
+        wedge.setAttribute("height", this.data.currentHeight)
         wedge.setAttribute("color", "#ffffff")
         wedge.setAttribute("opacity", "0.2")
-        wedge.setAttribute("geometry" , "radiusBottom:" + radiusBottom);
+        wedge.setAttribute("geometry" , "radiusBottom:" + this.data.currentRadius);
         wedge.setAttribute('material',  "wireframe:true");
         wedge.setAttribute('rotation', rotation);
 
-        this.el.sceneEl.appendChild(wedge)
+
+        this.el.sceneEl.appendChild(wedge);
+
+        this.el.sceneEl.emit('update-brush', {data: this.data});
+
     },
 
     tick: function() {
