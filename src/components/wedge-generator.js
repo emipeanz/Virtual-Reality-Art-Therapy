@@ -105,6 +105,27 @@ AFRAME.registerComponent('wedge-generator', {
 
     })
     },
+
+    //Generate a wireframe visualisation of the bounding box wedges can be generated in.
+    generateBoundingBoxVisualisation: function() {
+
+        var box = document.createElement('a-box')
+
+        box.setAttribute('height', this.maxYReach);
+        box.setAttribute('depth', this.maxZReach);
+        box.setAttribute('width', this.maxXReach);
+        box.setAttribute('material',  "wireframe:true");
+
+        var y = (this.maxYReach / 2) + this.originControllerPosition.y;
+        var z = this.originControllerPosition.z - (this.maxZReach / 2);
+
+        var boxPosition =  this.originControllerPosition.x + " " + y + " " + z;
+
+        box.setAttribute('position', boxPosition);
+
+        this.el.sceneEl.appendChild(box)
+    },
+
     tick: function() {
         // Track the position of the headset
         self.controllerEntity = document.querySelector('#right-hand');
