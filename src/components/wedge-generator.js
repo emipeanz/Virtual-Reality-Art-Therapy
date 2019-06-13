@@ -10,9 +10,9 @@ AFRAME.registerComponent('wedge-generator', {
         var el = this.el; //get reference to the entity.
 
         //Bounding box coordinates (m) (These would be set by therapist input)
-        var maxUpwardsReach = 0.5; // Reaching up
-        var maxLateralReach = 0.5; // Reaching to the left and right
-        var maxForwardReach = 0.5; // Reaching forwards
+        this.maxXReach = 0.3; // Reaching to the left and right
+        this.maxYReach = 0.3; // Reaching up
+        this.maxZReach = 0.3; // Reaching forwards
 
         //Resting position of controller, used as the origin of the bounding box
         this.originControllerPosition = new THREE.Vector3();
@@ -34,8 +34,26 @@ AFRAME.registerComponent('wedge-generator', {
                 console.log("SETTING ORIGIN TO ", self.controllerPosition);
                 self.originControllerPosition = self.controllerPosition;
                 self.originSet = true;
+
+                var box = document.createElement('a-box')
+
+                box.setAttribute('height', self.maxYReach);
+                box.setAttribute('depth', self.maxZReach);
+                box.setAttribute('width', self.maxXReach);
+                box.setAttribute('material',  "wireframe:true");
+
+                var y = (self.maxYReach / 2) + self.originControllerPosition.y;
+                var z = self.originControllerPosition.z - (self.maxZReach / 2);
+
+                var boxPosition =  self.originControllerPosition.x + " " + y + " " + z;
+
+                box.setAttribute('position', boxPosition);
+
+                self.el.sceneEl.appendChild(box)
+
+                console.log("putting box in")
             }
-            // else make the wedge according to location of the bounded box
+            // generate a wedge
             else{
                 // remove old wedge to make room for new one
                 var oldWedge = document.querySelector('a-cone');
@@ -54,8 +72,8 @@ AFRAME.registerComponent('wedge-generator', {
                     // Position wedge relative to position of controller
                     var position = self.controllerPosition;
                 }
+                //Generate the x, y and z coordinates randomly in the centre of the screen
                 else{
-                    //Generate the x, y and z coordinates randomly in the centre of the screen
                     var x = (Math.random())* (Math.floor(Math.random()*2) === 1 ? 1 : -1);
                     // elevate so not on ground
                     var y = Math.random() + 0.5
@@ -94,20 +112,5 @@ AFRAME.registerComponent('wedge-generator', {
         // Track the position of the headset
         self.controllerEntity = document.querySelector('#right-hand');
         this.camera = document.querySelector('#acamera');
-
-        // If the resting position of the controller is not set, set when controller position defined
-        if (this.startXPos === undefined) {
-            // Track the position of the controller
-            this.gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            this.controllerEntity = document.querySelector('#right-hand');
-            var position = self.controllerEntity.getAttribute('position');
-
-            // Set the origin position to the current position of the controller
-            if (position.x !== 0) {
-                this.startXPos = position.x;
-                this.startYPos = position.y + 0.75;
-                this.startZPos = position.z;
-            }
-        }
     }
 })
