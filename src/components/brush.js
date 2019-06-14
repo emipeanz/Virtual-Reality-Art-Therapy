@@ -55,7 +55,7 @@ AFRAME.registerComponent('brush', {
       // Trigger
       var value = evt.detail.value;
       self.sizeModifier = value;
-      if (value > 0.1) { //if trigger pressure is above
+      if (value > 0.1 && self.withinBounds()) { //if trigger pressure is above
         if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
@@ -111,6 +111,10 @@ AFRAME.registerComponent('brush', {
       }
     };
   })(),
+
+  withinBounds: function() {
+    return true;
+  },
 
   startNewStroke: function () {
     document.getElementById('ui_paint').play();
