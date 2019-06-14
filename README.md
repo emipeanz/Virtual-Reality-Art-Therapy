@@ -2,22 +2,22 @@
 
 Paint in VR in your browser. [Read more!](https://blog.mozvr.com/a-painter/)
 
-[![Visual Art Therapy](https://github.com/emipeanz/VR-Art-Therapy-700/blob/feature/documentation/assets/images/logo-new.png)]
+![Visual Art Therapy](https://github.com/emipeanz/VR-Art-Therapy-700/blob/feature/documentation/assets/images/logo-new.png)
 
-##Users
+## Users
 User guide for using Virtual Art Therapy
 
-###Features
+### Features
 // To Do
 
-###Equipment
+### Equipment
 To use this application, you will need a VR capable web browser, node (if running locally, [see Development and start 
 up below](https://github.com/emipeanz/VR-Art-Therapy-700#local-development-and-start-up)).
 
 You will need an HTC Vive headset, 1 motion controller and 2 sensors, see [Vive](https://www.vive.com/nz/) 
 for details on what each component is.
 
-##Development
+## Development
 
 ### Usage
 
@@ -44,7 +44,7 @@ npm start
 
 - Then, load [`http://localhost:8080`](http://localhost:8080) in your browser.
 
-###Debugging and Testing
+### Debugging and Testing
 
 To test and debug the application, use developer tools available in your web browser. It is **strongly recommended**
 you use Mozilla firefox as A-Painter and A-Frame were built by them.
