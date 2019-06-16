@@ -106,6 +106,12 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   function wrapAddPoint (addPointMethod) {
     return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
+
+      if(document !== null && document.querySelector('a-cone') !== null){
+        var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
+        var bbox = new THREE.Box3().setFromObject(wedgeMesh);
+      }
+
       if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
           this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
         return;
@@ -307,6 +313,7 @@ AFRAME.registerSystem('brush', {
       }
     }
   },
+  // called once per stroke
   addNewStroke: function (brushName, color, size, owner, timestamp) {
     if (!APAINTER_STATS.brushes[brushName]) {
       APAINTER_STATS.brushes[brushName] = 0;
@@ -316,6 +323,7 @@ AFRAME.registerSystem('brush', {
     owner = owner || 'local';
     timestamp = timestamp || Date.now();
     var Brush = this.getBrushByName(brushName);
+    console.log('brush', Brush);
     if (!Brush) {
       var newBrushName = Object.keys(AFRAME.BRUSHES)[0];
       Brush = AFRAME.BRUSHES[newBrushName];
@@ -326,6 +334,7 @@ AFRAME.registerSystem('brush', {
     var stroke = new Brush();
     stroke.brush = Brush;
     stroke.init(color, size, owner, timestamp);
+    console.log('stroke = ', stroke);
     this.strokes.push(stroke);
 
     var drawing = document.querySelector('.a-drawing');
@@ -360,6 +369,7 @@ AFRAME.registerSystem('brush', {
     return json;
   },
   getBinary: function () {
+    console.log('getting binary');
     var dataViews = [];
     var MAGIC = 'apainter';
 
@@ -456,6 +466,7 @@ AFRAME.registerSystem('brush', {
     console.timeEnd('JSON Loading');
   },
   loadBinary: function (buffer) {
+    console.log('load binary systems brush');
     var binaryManager = new BinaryManager(buffer);
     var magic = binaryManager.readString();
     if (magic !== 'apainter') {
