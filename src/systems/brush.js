@@ -110,23 +110,29 @@ AFRAME.registerBrush = function (name, definition, options) {
       if(document !== null && document.querySelector('a-cone') !== null){
         var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
         var bbox = new THREE.Box3().setFromObject(wedgeMesh);
-      }
 
-      if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
-          this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
-        return;
-      }
-      if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
-        this.data.numPoints++;
-        this.data.points.push({
-          'position': position.clone(),
-          'orientation': orientation.clone(),
-          'pressure': pressure,
-          'timestamp': timestamp
-        });
+        if(bbox.containsPoint(position)) {
+          console.log("within box")
 
-        this.data.prevPosition = position.clone();
-        this.data.prevPointerPosition = pointerPosition.clone();
+          if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
+              this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
+            return;
+          }
+          if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
+            this.data.numPoints++;
+            this.data.points.push({
+              'position': position.clone(),
+              'orientation': orientation.clone(),
+              'pressure': pressure,
+              'timestamp': timestamp
+            });
+
+            this.data.prevPosition = position.clone();
+            this.data.prevPointerPosition = pointerPosition.clone();
+          }
+        } else {
+          console.log('nah')
+        }
       }
     };
   }
@@ -323,7 +329,6 @@ AFRAME.registerSystem('brush', {
     owner = owner || 'local';
     timestamp = timestamp || Date.now();
     var Brush = this.getBrushByName(brushName);
-    console.log('brush', Brush);
     if (!Brush) {
       var newBrushName = Object.keys(AFRAME.BRUSHES)[0];
       Brush = AFRAME.BRUSHES[newBrushName];
@@ -334,7 +339,6 @@ AFRAME.registerSystem('brush', {
     var stroke = new Brush();
     stroke.brush = Brush;
     stroke.init(color, size, owner, timestamp);
-    console.log('stroke = ', stroke);
     this.strokes.push(stroke);
 
     var drawing = document.querySelector('.a-drawing');
@@ -369,7 +373,6 @@ AFRAME.registerSystem('brush', {
     return json;
   },
   getBinary: function () {
-    console.log('getting binary');
     var dataViews = [];
     var MAGIC = 'apainter';
 
