@@ -144,8 +144,6 @@ AFRAME.registerBrush = function (name, definition, options) {
         var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
         var bbox = new THREE.Box3().setFromObject(wedgeMesh);
 
-        this.displayBoundingBox(bbox)
-
         if(bbox.containsPoint(pointerPosition)) {
 
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
