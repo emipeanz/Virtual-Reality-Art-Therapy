@@ -130,7 +130,6 @@ AFRAME.registerComponent('wedge-generator', {
         this.el.sceneEl.appendChild(wedge);
 
         this.el.sceneEl.emit('update-brush', {data: this.data});
-
     },
 
     tick: function() {

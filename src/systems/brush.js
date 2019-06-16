@@ -124,7 +124,29 @@ AFRAME.registerBrush = function (name, definition, options) {
         var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
         var bbox = new THREE.Box3().setFromObject(wedgeMesh);
 
-        if(bbox.containsPoint(position)) {
+        var scene = document.querySelector('a-scene')
+
+        var oldWedge = document.querySelector('a-box');
+        if(oldWedge == null) {
+
+          var cube = document.createElement('a-box')
+          cube.setAttribute('position', bbox.getCenter())
+
+          var dimensions = new THREE.Vector3();
+          bbox.getSize(dimensions)
+
+          cube.setAttribute("width", dimensions.x)
+          cube.setAttribute("height", dimensions.y)
+          cube.setAttribute("depth", dimensions.z)
+          cube.setAttribute('material', "wireframe:true");
+
+
+          scene.appendChild(cube)
+
+        }
+        console.log("pos", position)
+        console.log("point pos", pointerPosition)
+        if(bbox.containsPoint(pointerPosition)) {
 
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
               this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
