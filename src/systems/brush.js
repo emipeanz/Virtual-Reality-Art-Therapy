@@ -112,11 +112,9 @@ AFRAME.registerBrush = function (name, definition, options) {
     return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
 
       this.vibrateController = function () {
-        console.log("in vibrate method")
         if (this.gamepads !== undefined && this.gamepads.length > 0) {
           var gamepad = this.gamepads[0];
           if (gamepad.hapticActuators && gamepad.hapticActuators[0]) {
-            console.log("vibrating...")
             gamepad.hapticActuators[ 0 ].pulse(0.3, 50)
           }
         }
