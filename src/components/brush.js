@@ -42,9 +42,6 @@ AFRAME.registerComponent('brush', {
     this.brushSizeScaleFactor;
     this.brushSizeScalingOffset;
 
-    global.navigator = global.window.navigator;
-    this.gamepads = navigator.getGamepads && navigator.getGamepads();
-
     this.previousAxis = 0;
 
     this.el.addEventListener('undo', function(evt) {
@@ -59,7 +56,6 @@ AFRAME.registerComponent('brush', {
       var value = evt.detail.value;
       self.sizeModifier = value;
       if (value > 0.1 ) { //if trigger pressure is above
-        self.vibrateController();
         if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
@@ -121,15 +117,6 @@ AFRAME.registerComponent('brush', {
 
   withinBounds: function() {
     return true;
-  },
-
-  vibrateController: function() {
-    if (this.gamepads !== undefined && this.gamepads.length > 0) {
-      var gamepad = this.gamepads[0];
-      if (gamepad.hapticActuators && gamepad.hapticActuators[0]) {
-        gamepad.hapticActuators[ 0 ].pulse(0.3, 50)
-      }
-    }
   },
 
   startNewStroke: function () {

@@ -89,6 +89,8 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   function wrapInit (initMethod) {
     return function init (color, brushSize, owner, timestamp) {
+      global.navigator = global.window.navigator;
+      this.gamepads = navigator.getGamepads && navigator.getGamepads();
       this.object3D = new THREE.Object3D();
       this.data = {
         points: [],
@@ -105,14 +107,26 @@ AFRAME.registerBrush = function (name, definition, options) {
   }
 
   function wrapAddPoint (addPointMethod) {
+
+
     return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
+
+      this.vibrateController = function () {
+        console.log("in vibrate method")
+        if (this.gamepads !== undefined && this.gamepads.length > 0) {
+          var gamepad = this.gamepads[0];
+          if (gamepad.hapticActuators && gamepad.hapticActuators[0]) {
+            console.log("vibrating...")
+            gamepad.hapticActuators[ 0 ].pulse(0.3, 50)
+          }
+        }
+      }
 
       if(document !== null && document.querySelector('a-cone') !== null){
         var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
         var bbox = new THREE.Box3().setFromObject(wedgeMesh);
 
         if(bbox.containsPoint(position)) {
-          console.log("within box")
 
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
               this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
@@ -131,8 +145,11 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.data.prevPointerPosition = pointerPosition.clone();
           }
         } else {
-          console.log('nah')
+          this.vibrateController();
         }
+      }
+      else {
+        this.vibrateController();
       }
     };
   }
@@ -224,6 +241,7 @@ AFRAME.registerSystem('brush', {
     });
   },
   tick: function (time, delta) {
+    this.gamepads = navigator.getGamepads && navigator.getGamepads();
     if (!this.strokes.length) { return; }
     for (var i = 0; i < this.strokes.length; i++) {
       this.strokes[i].tick(time, delta);
@@ -357,6 +375,7 @@ AFRAME.registerSystem('brush', {
 
     return stroke;
   },
+
   getJSON: function () {
     // Strokes
     var json = {
