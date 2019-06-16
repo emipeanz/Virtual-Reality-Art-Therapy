@@ -120,14 +120,9 @@ AFRAME.registerBrush = function (name, definition, options) {
         }
       }
 
-      if(document !== null && document.querySelector('a-cone') !== null){
-        var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
-        var bbox = new THREE.Box3().setFromObject(wedgeMesh);
-
-        var scene = document.querySelector('a-scene')
-
-        var oldWedge = document.querySelector('a-box');
-        if(oldWedge == null) {
+      this.displayBoundingBox = function(bbox) {
+        var oldBox = document.querySelector('a-box');
+        if(oldBox == null) {
 
           var cube = document.createElement('a-box')
           cube.setAttribute('position', bbox.getCenter())
@@ -140,12 +135,17 @@ AFRAME.registerBrush = function (name, definition, options) {
           cube.setAttribute("depth", dimensions.z)
           cube.setAttribute('material', "wireframe:true");
 
-
+          var scene = document.querySelector('a-scene')
           scene.appendChild(cube)
-
         }
-        console.log("pos", position)
-        console.log("point pos", pointerPosition)
+      }
+
+      if(document !== null && document.querySelector('a-cone') !== null){
+        var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
+        var bbox = new THREE.Box3().setFromObject(wedgeMesh);
+
+        this.displayBoundingBox(bbox)
+
         if(bbox.containsPoint(pointerPosition)) {
 
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
