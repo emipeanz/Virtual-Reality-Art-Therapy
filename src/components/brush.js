@@ -2,7 +2,7 @@
 
 AFRAME.registerComponent('brush', {
   schema: {
-    color: {type: 'color', default: '#91f9ff'},
+    color: {type: 'color', default: ''},
     size: {default: 0.01, min: 0.001, max: 0.3},
     brush: {default: 'smooth'},
     enabled: { default: true },
@@ -125,6 +125,7 @@ AFRAME.registerComponent('brush', {
     this.sat = Math.floor(25 + 70 * Math.random());
     this.light = Math.floor(40 + 45 * Math.random());
     this.setColor(this.hue, this.sat, this.light);
+    console.log('setting color to', this.hue);
   },
 
   // Changes the stroke color based on what the hue is
