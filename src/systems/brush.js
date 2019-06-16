@@ -357,6 +357,7 @@ AFRAME.registerSystem('brush', {
   },
   // called once per stroke
   addNewStroke: function (brushName, color, size, owner, timestamp) {
+    console.log("starting new stroke")
     if (!APAINTER_STATS.brushes[brushName]) {
       APAINTER_STATS.brushes[brushName] = 0;
     }
@@ -383,14 +384,6 @@ AFRAME.registerSystem('brush', {
       drawing.className = "a-drawing";
       document.querySelector('a-scene').appendChild(drawing);
     }
-
-    //var entity = document.createElement('a-entity');
-    //entity.className = "a-stroke";
-    //drawing.appendChild(entity);
-//    drawing.object3D.add(stroke.object3D);
-    //entity.setObject3D('mesh', stroke.object3D);
-    //stroke.entity = entity;
-
     return stroke;
   },
 
