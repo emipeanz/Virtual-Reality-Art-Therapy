@@ -42,6 +42,9 @@ AFRAME.registerComponent('brush', {
     this.brushSizeScaleFactor;
     this.brushSizeScalingOffset;
 
+    global.navigator = global.window.navigator;
+    this.gamepads = navigator.getGamepads && navigator.getGamepads();
+
     this.previousAxis = 0;
 
     this.el.addEventListener('undo', function(evt) {
@@ -55,7 +58,8 @@ AFRAME.registerComponent('brush', {
       // Trigger
       var value = evt.detail.value;
       self.sizeModifier = value;
-      if (value > 0.1) { //if trigger pressure is above
+      if (value > 0.1 ) { //if trigger pressure is above
+        self.vibrateController();
         if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
@@ -94,10 +98,13 @@ AFRAME.registerComponent('brush', {
   },
 
   tick: (function () {
+
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
 
     return function tick (time, delta) {
+      this.gamepads = navigator.getGamepads && navigator.getGamepads();
+
       this.obj.matrixWorld.decompose(this.position, rotation, scale);
       if ((this.position.x !== 0 && this.position.y !== 0 && this.position.z !== 0) &&
           (this.position.x !== 1 && this.position.y !== 1 && this.position.z !== 1) &&
@@ -111,6 +118,19 @@ AFRAME.registerComponent('brush', {
       }
     };
   })(),
+
+  withinBounds: function() {
+    return true;
+  },
+
+  vibrateController: function() {
+    if (this.gamepads !== undefined && this.gamepads.length > 0) {
+      var gamepad = this.gamepads[0];
+      if (gamepad.hapticActuators && gamepad.hapticActuators[0]) {
+        gamepad.hapticActuators[ 0 ].pulse(0.3, 50)
+      }
+    }
+  },
 
   startNewStroke: function () {
     document.getElementById('ui_paint').play();
