@@ -259,7 +259,6 @@ AFRAME.registerSystem('brush', {
     this.version = VERSION;
     this.clear();
     this.controllerName = null;
-    this.vibrate = false;
 
     var self = this;
     this.sceneEl.addEventListener('controllerconnected', function (evt) {
@@ -509,7 +508,6 @@ AFRAME.registerSystem('brush', {
     console.timeEnd('JSON Loading');
   },
   loadBinary: function (buffer) {
-    console.log('load binary systems brush');
     var binaryManager = new BinaryManager(buffer);
     var magic = binaryManager.readString();
     if (magic !== 'apainter') {
