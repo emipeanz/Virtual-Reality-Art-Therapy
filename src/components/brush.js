@@ -55,7 +55,7 @@ AFRAME.registerComponent('brush', {
       // Trigger
       var value = evt.detail.value;
       self.sizeModifier = value;
-      if (value > 0.1 ) { //if trigger pressure is above
+      if (value > 0.1) { //if trigger pressure is above
         if (!self.active) { // if you havent started painting
           self.startNewStroke();
           self.active = true;
@@ -99,8 +99,6 @@ AFRAME.registerComponent('brush', {
     var scale = new THREE.Vector3();
 
     return function tick (time, delta) {
-      this.gamepads = navigator.getGamepads && navigator.getGamepads();
-
       this.obj.matrixWorld.decompose(this.position, rotation, scale);
       if ((this.position.x !== 0 && this.position.y !== 0 && this.position.z !== 0) &&
           (this.position.x !== 1 && this.position.y !== 1 && this.position.z !== 1) &&
@@ -114,10 +112,6 @@ AFRAME.registerComponent('brush', {
       }
     };
   })(),
-
-  withinBounds: function() {
-    return true;
-  },
 
   startNewStroke: function () {
     document.getElementById('ui_paint').play();
