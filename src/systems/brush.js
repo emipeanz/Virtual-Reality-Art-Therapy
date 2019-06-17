@@ -88,7 +88,8 @@ AFRAME.registerBrush = function (name, definition, options) {
   };
 
   function wrapInit (initMethod) {
-    return function init (color, brushSize, owner, timestamp) {
+    return function init (color, brushSize, owner, timestamp, petalId) {
+      console.log('       initalizing stroke');
       global.navigator = global.window.navigator;
       this.gamepads = navigator.getGamepads && navigator.getGamepads();
       this.object3D = new THREE.Object3D();
@@ -100,7 +101,8 @@ AFRAME.registerBrush = function (name, definition, options) {
         numPoints: 0,
         color: color.clone(),
         timestamp: timestamp,
-        owner: owner
+        owner: owner,
+        petalId: petalId
       };
       initMethod.call(this, color, brushSize);
     };
@@ -147,7 +149,7 @@ AFRAME.registerBrush = function (name, definition, options) {
 
         var bbox = new THREE.Box3().setFromObject(mesh);
 
-        if(bbox.containsPoint(pointerPosition)) {
+        // if(bbox.containsPoint(pointerPosition)) {
           vibrate = false;
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
             this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
@@ -165,11 +167,11 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.data.prevPosition = position.clone();
             this.data.prevPointerPosition = pointerPosition.clone();
           }
-        } else if (vibrate) {
-          // If a stroke has just begun, and is out of bounds vibrate to inform the user
-          wedge.emit('pulse')
-          this.vibrateController();
-        }
+        // } else if (vibrate) {
+        //   // If a stroke has just begun, and is out of bounds vibrate to inform the user
+        //   wedge.emit('pulse')
+        //   this.vibrateController();
+        // }
       } else if (vibrate) {
         // If there is not yet a cone, the user is out of bounds. Vibrate to inform the user
         this.vibrateController();
@@ -363,7 +365,8 @@ AFRAME.registerSystem('brush', {
     }
   },
   // called once per stroke
-  addNewStroke: function (brushName, color, size, owner, timestamp) {
+  addNewStroke: function (brushName, color, size, petalId, owner, timestamp) {
+      console.log('     adding new stroke, petal id = ', petalId);
     // A new stroke has been started, controller should vibrate if out of the wedge bounds.
     vibrate = true;
 
@@ -384,7 +387,7 @@ AFRAME.registerSystem('brush', {
     Brush.used = true;
     var stroke = new Brush();
     stroke.brush = Brush;
-    stroke.init(color, size, owner, timestamp);
+    stroke.init(color, size, owner, timestamp, petalId);
     this.strokes.push(stroke);
 
     var drawing = document.querySelector('.a-drawing');

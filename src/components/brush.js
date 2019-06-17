@@ -109,13 +109,21 @@ AFRAME.registerComponent('brush', {
       if (this.currentStroke && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
         this.currentStroke.addPoint(this.position, rotation, pointerPosition, this.sizeModifier, time);
+
+        var temp = new THREE.Vector3().copy(this.position);
+        temp.y = temp.y + 0.3;
+        var tempPointer = new THREE.Vector3().copy(pointerPosition);
+        tempPointer.y = tempPointer.y + 0.3;
+        this.duplicatedStroke.addPoint(this.position, rotation, tempPointer, this.sizeModifier, time);
       }
     };
   })(),
 
   startNewStroke: function () {
+    console.log('start new stroke');
     document.getElementById('ui_paint').play();
-    this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size);
+    this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 2);
+    this.duplicatedStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 6);
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
   },
 
@@ -126,7 +134,6 @@ AFRAME.registerComponent('brush', {
     this.sat = Math.floor(25 + 70 * Math.random());
     this.light = Math.floor(40 + 45 * Math.random());
     this.setColor(this.hue, this.sat, this.light);
-    console.log('setting color to', this.hue);
   },
 
   // Changes the stroke color based on what the hue is
