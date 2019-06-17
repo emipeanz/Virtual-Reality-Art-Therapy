@@ -135,9 +135,10 @@ AFRAME.registerComponent('wedge-generator', {
     addPulseAnimation: function(wedge) {
         var animation = document.createElement('a-animation');
         animation.setAttribute("attribute", "opacity");
-        animation.setAttribute("dur", "500");
+        animation.setAttribute("dur", "300");
         animation.setAttribute("to", "1.0");
-        animation.setAttribute("repeat", "indefinite");
+        animation.setAttribute("from", "0.2");
+        animation.setAttribute("repeat", "1");
         animation.setAttribute("direction", "alternate");
         animation.setAttribute("begin", "pulse");
         animation.setAttribute("autoplay", "false");
