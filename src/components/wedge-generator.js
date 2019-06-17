@@ -126,7 +126,13 @@ AFRAME.registerComponent('wedge-generator', {
         wedge.setAttribute('material',  "wireframe:true");
         wedge.setAttribute('rotation', rotation);
 
+        this.addPulseAnimation(wedge);
 
+        this.el.sceneEl.appendChild(wedge);
+        this.el.sceneEl.emit('update-brush', {data: this.data});
+    },
+
+    addPulseAnimation: function(wedge) {
         var animation = document.createElement('a-animation');
         animation.setAttribute("attribute", "opacity");
         animation.setAttribute("dur", "500");
@@ -137,10 +143,6 @@ AFRAME.registerComponent('wedge-generator', {
         animation.setAttribute("autoplay", "false");
 
         wedge.appendChild(animation);
-
-        this.el.sceneEl.appendChild(wedge);
-
-        this.el.sceneEl.emit('update-brush', {data: this.data});
     },
 
     tick: function() {
