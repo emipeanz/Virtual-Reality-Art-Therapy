@@ -148,7 +148,7 @@ AFRAME.registerBrush = function (name, definition, options) {
         var bbox = new THREE.Box3().setFromObject(mesh);
 
         if(bbox.containsPoint(pointerPosition)) {
-
+          vibrate = false;
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
             this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
             return;
