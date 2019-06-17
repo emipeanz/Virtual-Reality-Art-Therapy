@@ -133,17 +133,29 @@ AFRAME.registerComponent('wedge-generator', {
     },
 
     addPulseAnimation: function(wedge) {
-        var animation = document.createElement('a-animation');
-        animation.setAttribute("attribute", "opacity");
-        animation.setAttribute("dur", "300");
-        animation.setAttribute("to", "1.0");
-        animation.setAttribute("from", "0.2");
-        animation.setAttribute("repeat", "1");
-        animation.setAttribute("direction", "alternate");
-        animation.setAttribute("begin", "pulse");
-        animation.setAttribute("autoplay", "false");
+        var opacityPulse = document.createElement('a-animation');
+        opacityPulse.setAttribute("attribute", "opacity");
+        opacityPulse.setAttribute("dur", "300");
+        opacityPulse.setAttribute("to", "1.0");
+        opacityPulse.setAttribute("from", "0.2");
+        opacityPulse.setAttribute("repeat", "1");
+        opacityPulse.setAttribute("direction", "alternate");
+        opacityPulse.setAttribute("begin", "pulse");
+        opacityPulse.setAttribute("autoplay", "false");
 
-        wedge.appendChild(animation);
+        wedge.appendChild(opacityPulse);
+
+        var sizePulse = document.createElement('a-animation');
+        sizePulse.setAttribute("attribute", "scale");
+        sizePulse.setAttribute("dur", "300");
+        sizePulse.setAttribute("to", "0.23 1.15 1.15"); //Increase scale by 15%
+        sizePulse.setAttribute("from", "0.2 1 1");
+        sizePulse.setAttribute("repeat", "1");
+        sizePulse.setAttribute("direction", "alternate");
+        sizePulse.setAttribute("begin", "pulse");
+        sizePulse.setAttribute("autoplay", "false");
+
+        wedge.appendChild(sizePulse);
     },
 
     tick: function() {
