@@ -117,20 +117,45 @@ AFRAME.registerComponent('wedge-generator', {
         rotation.z = 0;
         rotation.y = rotation.y + 90;
 
-        wedge.setAttribute("scale", "0.2 1 1")
-        wedge.setAttribute("position", position)
-        wedge.setAttribute("height", this.data.currentHeight)
-        wedge.setAttribute("color", "#ffffff")
-        wedge.setAttribute("opacity", "0.2")
+        wedge.setAttribute("scale", "0.2 1 1");
+        wedge.setAttribute("position", position);
+        wedge.setAttribute("height", this.data.currentHeight);
+        wedge.setAttribute("color", "#ffffff");
+        wedge.setAttribute("opacity", "0.2");
         wedge.setAttribute("geometry" , "radiusBottom:" + this.data.currentRadius);
         wedge.setAttribute('material',  "wireframe:true");
         wedge.setAttribute('rotation', rotation);
 
+        this.addPulseAnimation(wedge);
 
         this.el.sceneEl.appendChild(wedge);
-
         this.el.sceneEl.emit('update-brush', {data: this.data});
+    },
 
+    addPulseAnimation: function(wedge) {
+        var opacityPulse = document.createElement('a-animation');
+        opacityPulse.setAttribute("attribute", "opacity");
+        opacityPulse.setAttribute("dur", "300");
+        opacityPulse.setAttribute("to", "1.0");
+        opacityPulse.setAttribute("from", "0.2");
+        opacityPulse.setAttribute("repeat", "1");
+        opacityPulse.setAttribute("direction", "alternate");
+        opacityPulse.setAttribute("begin", "pulse");
+        opacityPulse.setAttribute("autoplay", "false");
+
+        wedge.appendChild(opacityPulse);
+
+        var sizePulse = document.createElement('a-animation');
+        sizePulse.setAttribute("attribute", "scale");
+        sizePulse.setAttribute("dur", "300");
+        sizePulse.setAttribute("to", "0.23 1.15 1.15"); //Increase scale by 15%
+        sizePulse.setAttribute("from", "0.2 1 1");
+        sizePulse.setAttribute("repeat", "1");
+        sizePulse.setAttribute("direction", "alternate");
+        sizePulse.setAttribute("begin", "pulse");
+        sizePulse.setAttribute("autoplay", "false");
+
+        wedge.appendChild(sizePulse);
     },
 
     tick: function() {

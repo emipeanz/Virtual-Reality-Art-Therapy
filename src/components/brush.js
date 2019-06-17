@@ -94,6 +94,7 @@ AFRAME.registerComponent('brush', {
   },
 
   tick: (function () {
+
     var rotation = new THREE.Quaternion();
     var scale = new THREE.Vector3();
 

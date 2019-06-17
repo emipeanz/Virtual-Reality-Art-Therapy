@@ -20,8 +20,8 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   if (AFRAME.BRUSHES[name]) {
     throw new Error('The brush `' + name + '` has been already registered. ' +
-                    'Check that you are not loading two versions of the same brush ' +
-                    'or two different brushes of the same name.');
+      'Check that you are not loading two versions of the same brush ' +
+      'or two different brushes of the same name.');
   }
 
   var BrushInterface = function () {};
@@ -89,6 +89,8 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   function wrapInit (initMethod) {
     return function init (color, brushSize, owner, timestamp) {
+      global.navigator = global.window.navigator;
+      this.gamepads = navigator.getGamepads && navigator.getGamepads();
       this.object3D = new THREE.Object3D();
       this.data = {
         points: [],
@@ -105,22 +107,72 @@ AFRAME.registerBrush = function (name, definition, options) {
   }
 
   function wrapAddPoint (addPointMethod) {
-    return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
-      if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
-          this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
-        return;
-      }
-      if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
-        this.data.numPoints++;
-        this.data.points.push({
-          'position': position.clone(),
-          'orientation': orientation.clone(),
-          'pressure': pressure,
-          'timestamp': timestamp
-        });
 
-        this.data.prevPosition = position.clone();
-        this.data.prevPointerPosition = pointerPosition.clone();
+
+    return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
+
+      this.vibrateController = function () {
+        // A vibration has been pulsed for the current stroke, it should not vibrate again until there is a new stroke
+        vibrate = false;
+        if (this.gamepads !== undefined && this.gamepads.length > 0) {
+          var gamepad = this.gamepads[0];
+          if (gamepad.hapticActuators && gamepad.hapticActuators[0]) {
+            gamepad.hapticActuators[ 0 ].pulse(0.15, 200)
+          }
+        }
+      };
+      this.displayBoundingBox = function(bbox) {
+        var oldBox = document.querySelector('a-box');
+        if(oldBox == null) {
+
+          var cube = document.createElement('a-box')
+          cube.setAttribute('position', bbox.getCenter())
+
+          var dimensions = new THREE.Vector3();
+          bbox.getSize(dimensions)
+
+          cube.setAttribute("width", dimensions.x)
+          cube.setAttribute("height", dimensions.y)
+          cube.setAttribute("depth", dimensions.z)
+          cube.setAttribute('material', "wireframe:true");
+
+          var scene = document.querySelector('a-scene')
+          scene.appendChild(cube)
+        }
+      }
+
+      if(document !== null && document.querySelector('a-cone') !== null){
+        var wedge = document.querySelector('a-cone');
+        var mesh = wedge.getObject3D('mesh');
+
+        var bbox = new THREE.Box3().setFromObject(mesh);
+
+        if(bbox.containsPoint(pointerPosition)) {
+
+          if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
+            this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
+            return;
+          }
+          if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
+            this.data.numPoints++;
+            this.data.points.push({
+              'position': position.clone(),
+              'orientation': orientation.clone(),
+              'pressure': pressure,
+              'timestamp': timestamp
+            });
+
+            this.data.prevPosition = position.clone();
+            this.data.prevPointerPosition = pointerPosition.clone();
+          }
+        } else if (vibrate) {
+          // If a stroke has just begun, and is out of bounds vibrate to inform the user
+          wedge.emit('pulse')
+          this.vibrateController();
+        }
+      } else if (vibrate) {
+        // If there is not yet a cone, the user is out of bounds. Vibrate to inform the user
+        this.vibrateController();
       }
     };
   }
@@ -150,7 +202,7 @@ AFRAME.registerSystem('brush', {
     return AFRAME.BRUSHES[name];
   },
   undo: function () {
-  	var stroke;
+    var stroke;
     for (var i = this.strokes.length - 1; i >= 0; i--) {
       if (this.strokes[i].data.owner !== 'local') continue;
       stroke = this.strokes.splice(i, 1)[0];
@@ -183,6 +235,7 @@ AFRAME.registerSystem('brush', {
       this.strokes.splice(order, 1)[0].remove();
     }
   },
+
   clear: function () {
     // Remove all the stroke entities
     //for (var i = 0; i < this.strokes.length; i++) {
@@ -202,6 +255,7 @@ AFRAME.registerSystem('brush', {
     this.strokes = [];
   },
   init: function () {
+    vibrate = false; // Should the current point being added cause a vibration
     this.version = VERSION;
     this.clear();
     this.controllerName = null;
@@ -212,6 +266,7 @@ AFRAME.registerSystem('brush', {
     });
   },
   tick: function (time, delta) {
+    this.gamepads = navigator.getGamepads && navigator.getGamepads();
     if (!this.strokes.length) { return; }
     for (var i = 0; i < this.strokes.length; i++) {
       this.strokes[i].tick(time, delta);
@@ -307,7 +362,11 @@ AFRAME.registerSystem('brush', {
       }
     }
   },
+  // called once per stroke
   addNewStroke: function (brushName, color, size, owner, timestamp) {
+    // A new stroke has been started, controller should vibrate if out of the wedge bounds.
+    vibrate = true;
+
     if (!APAINTER_STATS.brushes[brushName]) {
       APAINTER_STATS.brushes[brushName] = 0;
     }
@@ -334,16 +393,9 @@ AFRAME.registerSystem('brush', {
       drawing.className = "a-drawing";
       document.querySelector('a-scene').appendChild(drawing);
     }
-
-    //var entity = document.createElement('a-entity');
-    //entity.className = "a-stroke";
-    //drawing.appendChild(entity);
-//    drawing.object3D.add(stroke.object3D);
-    //entity.setObject3D('mesh', stroke.object3D);
-    //stroke.entity = entity;
-
     return stroke;
   },
+
   getJSON: function () {
     // Strokes
     var json = {
