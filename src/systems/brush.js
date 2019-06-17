@@ -20,8 +20,8 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   if (AFRAME.BRUSHES[name]) {
     throw new Error('The brush `' + name + '` has been already registered. ' +
-                    'Check that you are not loading two versions of the same brush ' +
-                    'or two different brushes of the same name.');
+      'Check that you are not loading two versions of the same brush ' +
+      'or two different brushes of the same name.');
   }
 
   var BrushInterface = function () {};
@@ -112,14 +112,14 @@ AFRAME.registerBrush = function (name, definition, options) {
     return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
 
       this.vibrateController = function () {
+        vibrate = false;
         if (this.gamepads !== undefined && this.gamepads.length > 0) {
           var gamepad = this.gamepads[0];
           if (gamepad.hapticActuators && gamepad.hapticActuators[0]) {
-            gamepad.hapticActuators[ 0 ].pulse(0.3, 50)
+            gamepad.hapticActuators[ 0 ].pulse(0.15, 200)
           }
         }
-      }
-
+      };
       this.displayBoundingBox = function(bbox) {
         var oldBox = document.querySelector('a-box');
         if(oldBox == null) {
@@ -147,7 +147,7 @@ AFRAME.registerBrush = function (name, definition, options) {
         if(bbox.containsPoint(pointerPosition)) {
 
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
-              this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
+            this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
             return;
           }
           if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
@@ -162,11 +162,10 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.data.prevPosition = position.clone();
             this.data.prevPointerPosition = pointerPosition.clone();
           }
-        } else {
+        } else if (vibrate) {
           this.vibrateController();
         }
-      }
-      else {
+      } else if (vibrate) {
         this.vibrateController();
       }
     };
@@ -197,7 +196,7 @@ AFRAME.registerSystem('brush', {
     return AFRAME.BRUSHES[name];
   },
   undo: function () {
-  	var stroke;
+    var stroke;
     for (var i = this.strokes.length - 1; i >= 0; i--) {
       if (this.strokes[i].data.owner !== 'local') continue;
       stroke = this.strokes.splice(i, 1)[0];
@@ -230,6 +229,7 @@ AFRAME.registerSystem('brush', {
       this.strokes.splice(order, 1)[0].remove();
     }
   },
+
   clear: function () {
     // Remove all the stroke entities
     //for (var i = 0; i < this.strokes.length; i++) {
@@ -249,9 +249,11 @@ AFRAME.registerSystem('brush', {
     this.strokes = [];
   },
   init: function () {
+    vibrate = false;
     this.version = VERSION;
     this.clear();
     this.controllerName = null;
+    this.vibrate = false;
 
     var self = this;
     this.sceneEl.addEventListener('controllerconnected', function (evt) {
@@ -357,7 +359,8 @@ AFRAME.registerSystem('brush', {
   },
   // called once per stroke
   addNewStroke: function (brushName, color, size, owner, timestamp) {
-    console.log("starting new stroke")
+    vibrate = true;
+
     if (!APAINTER_STATS.brushes[brushName]) {
       APAINTER_STATS.brushes[brushName] = 0;
     }
