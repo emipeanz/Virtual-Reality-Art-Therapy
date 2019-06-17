@@ -110,8 +110,7 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   function wrapAddPoint (addPointMethod) {
 
-
-    return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
+    return function addPoint (position, orientation, pointerPosition, pressure, timestamp, petalId) {
 
       this.vibrateController = function () {
         // A vibration has been pulsed for the current stroke, it should not vibrate again until there is a new stroke
@@ -127,21 +126,21 @@ AFRAME.registerBrush = function (name, definition, options) {
         var oldBox = document.querySelector('a-box');
         if(oldBox == null) {
 
-          var cube = document.createElement('a-box')
-          cube.setAttribute('position', bbox.getCenter())
+          var cube = document.createElement('a-box');
+          cube.setAttribute('position', bbox.getCenter());
 
           var dimensions = new THREE.Vector3();
-          bbox.getSize(dimensions)
+          bbox.getSize(dimensions);
 
-          cube.setAttribute("width", dimensions.x)
-          cube.setAttribute("height", dimensions.y)
-          cube.setAttribute("depth", dimensions.z)
+          cube.setAttribute("width", dimensions.x);
+          cube.setAttribute("height", dimensions.y);
+          cube.setAttribute("depth", dimensions.z);
           cube.setAttribute('material', "wireframe:true");
 
-          var scene = document.querySelector('a-scene')
-          scene.appendChild(cube)
+          var scene = document.querySelector('a-scene');
+          scene.appendChild(cube);
         }
-      }
+      };
 
       if(document !== null && document.querySelector('a-cone') !== null){
         var wedge = document.querySelector('a-cone');
@@ -155,7 +154,7 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
             return;
           }
-          if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
+          if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp, petalId)) {
             this.data.numPoints++;
             this.data.points.push({
               'position': position.clone(),

@@ -30,15 +30,17 @@ var onLoaded = require('../onloaded.js');
       alphaTest: 0.5
     };
 
-    sharedBufferGeometryManager.addSharedBuffer('strip-flat', new THREE.MeshBasicMaterial(optionsBasic), THREE.TriangleStripDrawMode);
-    sharedBufferGeometryManager.addSharedBuffer('strip-shaded', new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
-    sharedBufferGeometryManager.addSharedBuffer('strip-textured', new THREE.MeshStandardMaterial(optionTextured), THREE.TriangleStripDrawMode);
+    sharedBufferGeometryManager.addSharedBuffer('strip-shaded-0', new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
+    sharedBufferGeometryManager.addSharedBuffer('strip-shaded-1', new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
   });
 
   var line = {
 
     init: function (color, brushSize) {
-      this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type);
+      console.log('line init')
+
+      this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type + '-0');
+
       this.sharedBuffer.restartPrimitive();
 
       this.prevIdx = Object.assign({}, this.sharedBuffer.idx);
@@ -55,66 +57,71 @@ var onLoaded = require('../onloaded.js');
     addPoint: (function () {
       var direction = new THREE.Vector3();
 
-      return function (position, orientation, pointerPosition, pressure, timestamp) {
-        var converter = this.materialOptions.converter;
+      return function (position, orientation, pointerPosition, pressure, timestamp, petalId) {
+        this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type + '-' + petalId);
+        console.log('strip-' + this.materialOptions.type + '-' + petalId);
 
-        direction.set(1, 0, 0);
-        direction.applyQuaternion(orientation);
-        direction.normalize();
+         var converter = this.materialOptions.converter;
 
-        var posA = pointerPosition.clone();
-        var posB = pointerPosition.clone();
-        var brushSize = this.data.size * pressure;
-        posA.add(direction.clone().multiplyScalar(brushSize / 2));
-        posB.add(direction.clone().multiplyScalar(-brushSize / 2));
+         direction.set(1, 0, 0);
+         direction.applyQuaternion(orientation);
+         direction.normalize();
 
-        if (this.first && this.prevIdx.position > 0) {
-          // Degenerated triangle
-          this.first = false;
-          this.sharedBuffer.addVertex(posA.x, posA.y, posA.z);
-          this.sharedBuffer.idx.normal++;
-          this.sharedBuffer.idx.color++;
-          this.sharedBuffer.idx.uv++;
+         var posA = pointerPosition.clone();
+         var posB = pointerPosition.clone();
+         var brushSize = this.data.size * pressure;
+         posA.add(direction.clone().multiplyScalar(brushSize / 2));
+         posB.add(direction.clone().multiplyScalar(-brushSize / 2));
 
-          this.idx = Object.assign({}, this.sharedBuffer.idx);
-        }
+         if (this.first && this.prevIdx.position > 0) {
+           // Degenerated triangle
+           this.first = false;
+           this.sharedBuffer.addVertex(posA.x, posA.y, posA.z);
+           this.sharedBuffer.idx.normal++;
+           this.sharedBuffer.idx.color++;
+           this.sharedBuffer.idx.uv++;
 
-        /*
-          2---3
-          | \ |
-          0---1
-        */
-        this.sharedBuffer.addVertex(posA.x, posA.y, posA.z);
-        this.sharedBuffer.addVertex(posB.x, posB.y, posB.z);
-        this.sharedBuffer.idx.normal += 2;
+           this.idx = Object.assign({}, this.sharedBuffer.idx);
+         }
 
-        this.sharedBuffer.addColor(this.data.color.r, this.data.color.g, this.data.color.b);
-        this.sharedBuffer.addColor(this.data.color.r, this.data.color.g, this.data.color.b);
+         /*
+           2---3
+           | \ |
+           0---1
+         */
+         this.sharedBuffer.addVertex(posA.x, posA.y, posA.z);
+         this.sharedBuffer.addVertex(posB.x, posB.y, posB.z);
+         this.sharedBuffer.idx.normal += 2;
 
-        if (this.materialOptions.type === 'textured') {
-          this.sharedBuffer.idx.uv += 2;
-          var uvs = this.sharedBuffer.current.attributes.uv.array;
-          var u, offset;
-          for (var i = 0; i < this.data.numPoints + 1; i++) {
-            u = i / this.data.numPoints;
-            offset = 4 * i;
-            if (this.prevIdx.uv !== 0) {
-              offset += (this.prevIdx.uv + 1) * 2;
-            }
+         this.sharedBuffer.addColor(this.data.color.r, this.data.color.g, this.data.color.b);
+         this.sharedBuffer.addColor(this.data.color.r, this.data.color.g, this.data.color.b);
 
-            uvs[offset] = converter.convertU(u);
-            uvs[offset + 1] = converter.convertV(0);
+         if (this.materialOptions.type === 'textured') {
+           this.sharedBuffer.idx.uv += 2;
+           var uvs = this.sharedBuffer.current.attributes.uv.array;
+           var u, offset;
+           for (var i = 0; i < this.data.numPoints + 1; i++) {
+             u = i / this.data.numPoints;
+             offset = 4 * i;
+             if (this.prevIdx.uv !== 0) {
+               offset += (this.prevIdx.uv + 1) * 2;
+             }
 
-            uvs[offset + 2] = converter.convertU(u);
-            uvs[offset + 3] = converter.convertV(1);
-          }
-        }
+             uvs[offset] = converter.convertU(u);
+             uvs[offset + 1] = converter.convertV(0);
 
-        this.idx = Object.assign({}, this.sharedBuffer.idx);
+             uvs[offset + 2] = converter.convertU(u);
+             uvs[offset + 3] = converter.convertV(1);
+           }
+         }
 
-        this.sharedBuffer.update();
-        this.computeStripVertexNormals();
-        return true;
+         this.idx = Object.assign({}, this.sharedBuffer.idx);
+
+         this.sharedBuffer.update();
+         this.computeStripVertexNormals();
+         console.log('ids = ', this.idx);
+         return true;
+
       };
     })(),
 

@@ -108,13 +108,13 @@ AFRAME.registerComponent('brush', {
 
       if (this.currentStroke && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
-        this.currentStroke.addPoint(this.position, rotation, pointerPosition, this.sizeModifier, time);
+        this.currentStroke.addPoint(this.position, rotation, pointerPosition, this.sizeModifier, time, this.currentStroke.data.petalId);
 
         var temp = new THREE.Vector3().copy(this.position);
         temp.y = temp.y + 0.3;
         var tempPointer = new THREE.Vector3().copy(pointerPosition);
         tempPointer.y = tempPointer.y + 0.3;
-        this.duplicatedStroke.addPoint(this.position, rotation, tempPointer, this.sizeModifier, time);
+        this.duplicatedStroke.addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.duplicatedStroke.data.petalId);
       }
     };
   })(),
@@ -122,8 +122,8 @@ AFRAME.registerComponent('brush', {
   startNewStroke: function () {
     console.log('start new stroke');
     document.getElementById('ui_paint').play();
-    this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 2);
-    this.duplicatedStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 6);
+    this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 0);
+    this.duplicatedStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 1);
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
   },
 
