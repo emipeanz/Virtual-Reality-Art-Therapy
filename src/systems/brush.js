@@ -112,6 +112,7 @@ AFRAME.registerBrush = function (name, definition, options) {
     return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
 
       this.vibrateController = function () {
+        // A vibration has been pulsed for the current stroke, it should not vibrate again until there is a new stroke
         vibrate = false;
         if (this.gamepads !== undefined && this.gamepads.length > 0) {
           var gamepad = this.gamepads[0];
@@ -163,9 +164,11 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.data.prevPointerPosition = pointerPosition.clone();
           }
         } else if (vibrate) {
+          // If a stroke has just begun, and is out of bounds vibrate to inform the user
           this.vibrateController();
         }
       } else if (vibrate) {
+        // If there is not yet a cone, the user is out of bounds. Vibrate to inform the user
         this.vibrateController();
       }
     };
@@ -249,7 +252,7 @@ AFRAME.registerSystem('brush', {
     this.strokes = [];
   },
   init: function () {
-    vibrate = false;
+    vibrate = false; // Should the current point being added cause a vibration
     this.version = VERSION;
     this.clear();
     this.controllerName = null;
@@ -359,6 +362,7 @@ AFRAME.registerSystem('brush', {
   },
   // called once per stroke
   addNewStroke: function (brushName, color, size, owner, timestamp) {
+    // A new stroke has been started, controller should vibrate if out of the wedge bounds.
     vibrate = true;
 
     if (!APAINTER_STATS.brushes[brushName]) {
