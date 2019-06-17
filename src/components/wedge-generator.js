@@ -117,15 +117,26 @@ AFRAME.registerComponent('wedge-generator', {
         rotation.z = 0;
         rotation.y = rotation.y + 90;
 
-        wedge.setAttribute("scale", "0.2 1 1")
-        wedge.setAttribute("position", position)
-        wedge.setAttribute("height", this.data.currentHeight)
-        wedge.setAttribute("color", "#ffffff")
-        wedge.setAttribute("opacity", "0.2")
+        wedge.setAttribute("scale", "0.2 1 1");
+        wedge.setAttribute("position", position);
+        wedge.setAttribute("height", this.data.currentHeight);
+        wedge.setAttribute("color", "#ffffff");
+        wedge.setAttribute("opacity", "0.2");
         wedge.setAttribute("geometry" , "radiusBottom:" + this.data.currentRadius);
         wedge.setAttribute('material',  "wireframe:true");
         wedge.setAttribute('rotation', rotation);
 
+
+        var animation = document.createElement('a-animation');
+        animation.setAttribute("attribute", "opacity");
+        animation.setAttribute("dur", "500");
+        animation.setAttribute("to", "1.0");
+        animation.setAttribute("repeat", "indefinite");
+        animation.setAttribute("direction", "alternate");
+        animation.setAttribute("begin", "pulse");
+        animation.setAttribute("autoplay", "false");
+
+        wedge.appendChild(animation);
 
         this.el.sceneEl.appendChild(wedge);
 

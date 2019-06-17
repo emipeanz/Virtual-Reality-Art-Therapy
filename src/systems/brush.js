@@ -142,8 +142,10 @@ AFRAME.registerBrush = function (name, definition, options) {
       }
 
       if(document !== null && document.querySelector('a-cone') !== null){
-        var wedgeMesh = document.querySelector('a-cone').getObject3D('mesh');
-        var bbox = new THREE.Box3().setFromObject(wedgeMesh);
+        var wedge = document.querySelector('a-cone');
+        var mesh = wedge.getObject3D('mesh');
+
+        var bbox = new THREE.Box3().setFromObject(mesh);
 
         if(bbox.containsPoint(pointerPosition)) {
 
@@ -165,6 +167,7 @@ AFRAME.registerBrush = function (name, definition, options) {
           }
         } else if (vibrate) {
           // If a stroke has just begun, and is out of bounds vibrate to inform the user
+          wedge.emit('pulse')
           this.vibrateController();
         }
       } else if (vibrate) {
