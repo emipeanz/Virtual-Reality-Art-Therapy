@@ -91,6 +91,7 @@ AFRAME.registerBrush = function (name, definition, options) {
     return function init (color, brushSize, owner, timestamp, petalId) {
       console.log('       initalizing stroke');
       global.navigator = global.window.navigator;
+      controllerWithinBounds = false
       this.gamepads = navigator.getGamepads && navigator.getGamepads();
       this.object3D = new THREE.Object3D();
       this.data = {
@@ -113,6 +114,7 @@ AFRAME.registerBrush = function (name, definition, options) {
     return function addPoint (position, orientation, pointerPosition, pressure, timestamp, petalId) {
 
       this.vibrateController = function () {
+        controllerWithinBounds = false;
         // A vibration has been pulsed for the current stroke, it should not vibrate again until there is a new stroke
         vibrate = false;
         if (this.gamepads !== undefined && this.gamepads.length > 0) {
@@ -148,10 +150,14 @@ AFRAME.registerBrush = function (name, definition, options) {
 
         var bbox = new THREE.Box3().setFromObject(mesh);
 
-        // if(bbox.containsPoint(pointerPosition)) {
+
+        // Only draw the line ie. add the points if the controller is in the wedge, OR it is a duplicated point
+        if((bbox.containsPoint(pointerPosition) && petalId === 0) || ((petalId !== 0 ) && controllerWithinBounds)) {
+          console.log('inside');
+          controllerWithinBounds = true;
           vibrate = false;
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
-            this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
+              this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
             return;
           }
           if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp, petalId)) {
@@ -166,11 +172,13 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.data.prevPosition = position.clone();
             this.data.prevPointerPosition = pointerPosition.clone();
           }
-        // } else if (vibrate) {
-        //   // If a stroke has just begun, and is out of bounds vibrate to inform the user
-        //   wedge.emit('pulse')
-        //   this.vibrateController();
-        // }
+        }else if(controllerWithinBounds){
+          controllerWithinBounds = false;
+        } else if (vibrate) {
+          // If a stroke has just begun, and is out of bounds vibrate to inform the user
+          wedge.emit('pulse');
+          this.vibrateController();
+        }
       } else if (vibrate) {
         // If there is not yet a cone, the user is out of bounds. Vibrate to inform the user
         this.vibrateController();

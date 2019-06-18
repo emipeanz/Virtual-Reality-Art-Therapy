@@ -30,17 +30,18 @@ var onLoaded = require('../onloaded.js');
       alphaTest: 0.5
     };
 
-    sharedBufferGeometryManager.addSharedBuffer('strip-shaded-0', new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
-    sharedBufferGeometryManager.addSharedBuffer('strip-shaded-1', new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
+    // Make a shared buffer for each 'petal', lines are separately drawn on the shared buffers, not all on one single buffer
+    for(i=0;i<10;i++){
+        sharedBufferGeometryManager.addSharedBuffer('strip-shaded-' + i, new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
+    }
   });
 
   var line = {
 
     init: function (color, brushSize) {
-      console.log('line init')
 
-      this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type + '-0');
-
+      this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type + '-1');
+      console.log("restarting primitive")
       this.sharedBuffer.restartPrimitive();
 
       this.prevIdx = Object.assign({}, this.sharedBuffer.idx);
@@ -119,7 +120,6 @@ var onLoaded = require('../onloaded.js');
 
          this.sharedBuffer.update();
          this.computeStripVertexNormals();
-         console.log('ids = ', this.idx);
          return true;
 
       };
