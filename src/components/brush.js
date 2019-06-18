@@ -72,6 +72,7 @@ AFRAME.registerComponent('brush', {
             }
         }
         self.active = false;
+        self.currentStrokes = [];
 
       }
     })
