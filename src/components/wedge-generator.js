@@ -4,7 +4,8 @@ AFRAME.registerComponent('wedge-generator', {
         minHeight: { default: 0.1 },
         maxHeight: { default: 0.3 },
         minPetalNum: { default: 4 },
-        maxPetalNum: { default: 10 },
+        maxPetalNum: { default: 6 },
+        currentPetalNum: { default: 4},
         currentHeight: { default: 0.1 },
         currentRadius: { default: 0.1 }
     },
@@ -108,9 +109,9 @@ AFRAME.registerComponent('wedge-generator', {
         this.data.currentHeight = Math.random() * (this.data.maxHeight - this.data.minHeight) + this.data.minHeight;
 
         //Flowers should have between 4 and 10 petals
-        var numPetals = Math.round(Math.random() * (this.data.maxPetalNum - this.data.minPetalNum)) + this.data.minPetalNum;
+        this.data.currentPetalNum = Math.round(Math.random() * (this.data.maxPetalNum - this.data.minPetalNum)) + this.data.minPetalNum;
         //Radius is calculated based on number of petals
-        this.data.currentRadius = this.data.currentHeight *  Math.tan(Math.PI / numPetals);
+        this.data.currentRadius = this.data.currentHeight *  Math.tan(Math.PI / this.data.currentPetalNum);
 
         var rotation = this.camera.getAttribute('rotation');
         rotation.x = Math.random() * 360;
@@ -129,7 +130,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.addPulseAnimation(wedge);
 
         this.el.sceneEl.appendChild(wedge);
-        this.el.sceneEl.emit('update-brush', {data: this.data});
+        this.el.sceneEl.emit('wedge-generated', {data: this.data});
     },
 
     addPulseAnimation: function(wedge) {

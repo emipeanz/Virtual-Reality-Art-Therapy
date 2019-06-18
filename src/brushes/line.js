@@ -33,7 +33,7 @@ var onLoaded = require('../onloaded.js');
     buffers = []
 
     // Make a shared buffer for each 'petal', lines are separately drawn on the shared buffers, not all on one single buffer
-    for(i=0;i<10;i++){
+    for(i = 0; i < 10; i++){
         buffers.push(sharedBufferGeometryManager.addSharedBuffer('strip-shaded-' + i, new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode));
     }
   });

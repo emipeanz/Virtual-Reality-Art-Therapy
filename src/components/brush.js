@@ -39,6 +39,8 @@ AFRAME.registerComponent('brush', {
     this.maxBrushSize = 0.07;
     this.minBrushSize = 0.004;
 
+    this.currentPetalNum = 4;
+
     this.brushSizeScaleFactor;
     this.brushSizeScalingOffset;
 
@@ -73,11 +75,11 @@ AFRAME.registerComponent('brush', {
         }
         self.active = false;
         self.currentStrokes = [];
-
       }
     })
 
-    this.el.sceneEl.addEventListener('update-brush', function(evt){
+    this.el.sceneEl.addEventListener('wedge-generated', function(evt){
+      self.currentPetalNum = evt.detail.data.currentPetalNum;
       self.setRandomColor();
       self.setMaxBrushSize(evt.detail.data);
     })
@@ -110,9 +112,7 @@ AFRAME.registerComponent('brush', {
       if (this.currentStrokes[0] && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
 
-        console.log('strokes', this.currentStrokes)
         for (i = 0; i < this.currentStrokes.length; i++) {
-          console.log("adding point for stroke = ", i)
           var tempPointer = new THREE.Vector3().copy(pointerPosition);
           tempPointer.y = tempPointer.y + 0.1 * i;
 
@@ -123,10 +123,9 @@ AFRAME.registerComponent('brush', {
   })(),
 
   startNewStroke: function () {
-    console.log('start new stroke');
     document.getElementById('ui_paint').play();
-    for (i = 0; i < 4; i++) {
-      console.log("adding new stroke")
+    console.log("current num", this.currentPetalNum);
+    for (i = 0; i < this.currentPetalNum; i++) {
       this.currentStrokes.push(this.system.addNewStroke(this.data.brush, this.color, this.data.size, i));
     }
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStrokes[0]});
