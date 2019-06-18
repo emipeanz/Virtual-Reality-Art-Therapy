@@ -89,7 +89,6 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   function wrapInit (initMethod) {
     return function init (color, brushSize, owner, timestamp, petalId) {
-      console.log('       initalizing stroke');
       global.navigator = global.window.navigator;
       controllerWithinBounds = false
       this.gamepads = navigator.getGamepads && navigator.getGamepads();
@@ -372,7 +371,6 @@ AFRAME.registerSystem('brush', {
   },
   // called once per stroke
   addNewStroke: function (brushName, color, size, petalId, owner, timestamp) {
-      console.log('     adding new stroke, petal id = ', petalId);
     // A new stroke has been started, controller should vibrate if out of the wedge bounds.
     vibrate = true;
 

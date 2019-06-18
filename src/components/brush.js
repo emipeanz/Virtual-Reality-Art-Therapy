@@ -124,7 +124,6 @@ AFRAME.registerComponent('brush', {
 
   startNewStroke: function () {
     document.getElementById('ui_paint').play();
-    console.log("current num", this.currentPetalNum);
     for (i = 0; i < this.currentPetalNum; i++) {
       this.currentStrokes.push(this.system.addNewStroke(this.data.brush, this.color, this.data.size, i));
     }
