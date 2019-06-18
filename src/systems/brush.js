@@ -153,7 +153,6 @@ AFRAME.registerBrush = function (name, definition, options) {
 
         // Only draw the line ie. add the points if the controller is in the wedge, OR it is a duplicated point
         if((bbox.containsPoint(pointerPosition) && petalId === 0) || ((petalId !== 0 ) && controllerWithinBounds)) {
-          console.log('inside');
           controllerWithinBounds = true;
           vibrate = false;
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||

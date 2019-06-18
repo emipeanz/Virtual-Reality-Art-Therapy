@@ -30,19 +30,21 @@ var onLoaded = require('../onloaded.js');
       alphaTest: 0.5
     };
 
+    buffers = []
+
     // Make a shared buffer for each 'petal', lines are separately drawn on the shared buffers, not all on one single buffer
     for(i=0;i<10;i++){
-        sharedBufferGeometryManager.addSharedBuffer('strip-shaded-' + i, new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
+        buffers.push(sharedBufferGeometryManager.addSharedBuffer('strip-shaded-' + i, new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode));
     }
   });
 
   var line = {
 
     init: function (color, brushSize) {
-
-      this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type + '-1');
-      console.log("restarting primitive")
-      this.sharedBuffer.restartPrimitive();
+      for (i = 0; i < buffers.length; i++) {
+        buffers[i].restartPrimitive();
+      }
+      this.sharedBuffer = buffers[0];
 
       this.prevIdx = Object.assign({}, this.sharedBuffer.idx);
       this.idx = Object.assign({}, this.sharedBuffer.idx);
@@ -60,7 +62,6 @@ var onLoaded = require('../onloaded.js');
 
       return function (position, orientation, pointerPosition, pressure, timestamp, petalId) {
         this.sharedBuffer = sharedBufferGeometryManager.getSharedBuffer('strip-' + this.materialOptions.type + '-' + petalId);
-        console.log('strip-' + this.materialOptions.type + '-' + petalId);
 
          var converter = this.materialOptions.converter;
 
