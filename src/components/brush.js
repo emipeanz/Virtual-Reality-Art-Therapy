@@ -22,7 +22,7 @@ AFRAME.registerComponent('brush', {
 
     this.obj = this.el.object3D;
 
-    this.currentStroke = null;
+    this.currentStrokes = [];
     this.strokeEntities = [];
 
     this.sizeModifier = 0.0;
@@ -106,15 +106,17 @@ AFRAME.registerComponent('brush', {
         this.el.emit('position-changed', {position: this.position});
       }
 
-      if (this.currentStroke && this.active) {
+      if (this.currentStrokes[0] && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
-        this.currentStroke.addPoint(this.position, rotation, pointerPosition, this.sizeModifier, time, this.currentStroke.data.petalId);
 
-        var temp = new THREE.Vector3().copy(this.position);
-        temp.y = temp.y + 0.3;
-        var tempPointer = new THREE.Vector3().copy(pointerPosition);
-        tempPointer.y = tempPointer.y + 0.3;
-        this.duplicatedStroke.addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.duplicatedStroke.data.petalId);
+        console.log('strokes', this.currentStrokes)
+        for (i = 0; i < this.currentStrokes.length; i++) {
+          console.log("adding point for stroke = ", i)
+          var tempPointer = new THREE.Vector3().copy(pointerPosition);
+          tempPointer.y = tempPointer.y + 0.1 * i;
+
+          this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
+        }
       }
     };
   })(),
@@ -122,9 +124,11 @@ AFRAME.registerComponent('brush', {
   startNewStroke: function () {
     console.log('start new stroke');
     document.getElementById('ui_paint').play();
-    this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 0);
-    this.duplicatedStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size, 1);
-    this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
+    for (i = 0; i < 4; i++) {
+      console.log("adding new stroke")
+      this.currentStrokes.push(this.system.addNewStroke(this.data.brush, this.color, this.data.size, i));
+    }
+    this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStrokes[0]});
   },
 
   // Function finds a random color, and sets the hue variable which is the color 'theme' for the petal
