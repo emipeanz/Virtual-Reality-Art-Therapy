@@ -88,8 +88,9 @@ AFRAME.registerBrush = function (name, definition, options) {
   };
 
   function wrapInit (initMethod) {
-    return function init (color, brushSize, owner, timestamp) {
+    return function init (color, brushSize, owner, timestamp, petalId) {
       global.navigator = global.window.navigator;
+      controllerWithinBounds = false
       this.gamepads = navigator.getGamepads && navigator.getGamepads();
       this.object3D = new THREE.Object3D();
       this.data = {
@@ -100,7 +101,8 @@ AFRAME.registerBrush = function (name, definition, options) {
         numPoints: 0,
         color: color.clone(),
         timestamp: timestamp,
-        owner: owner
+        owner: owner,
+        petalId: petalId
       };
       initMethod.call(this, color, brushSize);
     };
@@ -108,10 +110,10 @@ AFRAME.registerBrush = function (name, definition, options) {
 
   function wrapAddPoint (addPointMethod) {
 
-
-    return function addPoint (position, orientation, pointerPosition, pressure, timestamp) {
+    return function addPoint (position, orientation, pointerPosition, pressure, timestamp, petalId) {
 
       this.vibrateController = function () {
+        controllerWithinBounds = false;
         // A vibration has been pulsed for the current stroke, it should not vibrate again until there is a new stroke
         vibrate = false;
         if (this.gamepads !== undefined && this.gamepads.length > 0) {
@@ -125,21 +127,21 @@ AFRAME.registerBrush = function (name, definition, options) {
         var oldBox = document.querySelector('a-box');
         if(oldBox == null) {
 
-          var cube = document.createElement('a-box')
-          cube.setAttribute('position', bbox.getCenter())
+          var cube = document.createElement('a-box');
+          cube.setAttribute('position', bbox.getCenter());
 
           var dimensions = new THREE.Vector3();
-          bbox.getSize(dimensions)
+          bbox.getSize(dimensions);
 
-          cube.setAttribute("width", dimensions.x)
-          cube.setAttribute("height", dimensions.y)
-          cube.setAttribute("depth", dimensions.z)
+          cube.setAttribute("width", dimensions.x);
+          cube.setAttribute("height", dimensions.y);
+          cube.setAttribute("depth", dimensions.z);
           cube.setAttribute('material', "wireframe:true");
 
-          var scene = document.querySelector('a-scene')
-          scene.appendChild(cube)
+          var scene = document.querySelector('a-scene');
+          scene.appendChild(cube);
         }
-      }
+      };
 
       if(document !== null && document.querySelector('a-cone') !== null){
         var wedge = document.querySelector('a-cone');
@@ -147,13 +149,16 @@ AFRAME.registerBrush = function (name, definition, options) {
 
         var bbox = new THREE.Box3().setFromObject(mesh);
 
-        if(bbox.containsPoint(pointerPosition)) {
+
+        // Only draw the line ie. add the points if the controller is in the wedge, OR it is a duplicated point
+        if((bbox.containsPoint(pointerPosition) && petalId === 0) || ((petalId !== 0 ) && controllerWithinBounds)) {
+          controllerWithinBounds = true;
           vibrate = false;
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
-            this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
+              this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
             return;
           }
-          if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp)) {
+          if (addPointMethod.call(this, position, orientation, pointerPosition, pressure, timestamp, petalId)) {
             this.data.numPoints++;
             this.data.points.push({
               'position': position.clone(),
@@ -165,9 +170,11 @@ AFRAME.registerBrush = function (name, definition, options) {
             this.data.prevPosition = position.clone();
             this.data.prevPointerPosition = pointerPosition.clone();
           }
+        }else if(controllerWithinBounds){
+          controllerWithinBounds = false;
         } else if (vibrate) {
           // If a stroke has just begun, and is out of bounds vibrate to inform the user
-          wedge.emit('pulse')
+          wedge.emit('pulse');
           this.vibrateController();
         }
       } else if (vibrate) {
@@ -363,7 +370,7 @@ AFRAME.registerSystem('brush', {
     }
   },
   // called once per stroke
-  addNewStroke: function (brushName, color, size, owner, timestamp) {
+  addNewStroke: function (brushName, color, size, petalId, owner, timestamp) {
     // A new stroke has been started, controller should vibrate if out of the wedge bounds.
     vibrate = true;
 
@@ -384,7 +391,7 @@ AFRAME.registerSystem('brush', {
     Brush.used = true;
     var stroke = new Brush();
     stroke.brush = Brush;
-    stroke.init(color, size, owner, timestamp);
+    stroke.init(color, size, owner, timestamp, petalId);
     this.strokes.push(stroke);
 
     var drawing = document.querySelector('.a-drawing');
