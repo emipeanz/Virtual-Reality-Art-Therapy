@@ -92,7 +92,7 @@ AFRAME.registerSystem('painter', {
             logo.setAttribute('visible', false);
           })
           .onUpdate(function () {
-            mesh.children[0].material.opacity = this.alpha;
+            mesh.material.opacity = this.alpha;
           }).start();
         self.startPainting = true;
       }
