@@ -114,7 +114,7 @@ AFRAME.registerComponent('brush', {
 
         for (i = 0; i < this.currentStrokes.length; i++) {
           var tempPointer = new THREE.Vector3().copy(pointerPosition);
-          tempPointer.y = tempPointer.y + 0.1 * i;
+          tempPointer.y = tempPointer.y + 0.2 * i;
 
           this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
         }

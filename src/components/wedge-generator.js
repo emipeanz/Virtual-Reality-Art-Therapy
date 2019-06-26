@@ -4,7 +4,7 @@ AFRAME.registerComponent('wedge-generator', {
         minHeight: { default: 0.1 },
         maxHeight: { default: 0.3 },
         minPetalNum: { default: 4 },
-        maxPetalNum: { default: 6 },
+        maxPetalNum: { default: 4 },
         currentPetalNum: { default: 4},
         currentHeight: { default: 0.1 },
         currentRadius: { default: 0.1 }
@@ -116,7 +116,7 @@ AFRAME.registerComponent('wedge-generator', {
         var rotation = this.camera.getAttribute('rotation');
         rotation.x = Math.random() * 360;
         rotation.z = 0;
-        rotation.y = rotation.y + 90;
+        rotation.y = rotation.y;
 
         wedge.setAttribute("scale", "0.2 1 1");
         wedge.setAttribute("position", position);
