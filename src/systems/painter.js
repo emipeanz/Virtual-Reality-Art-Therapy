@@ -55,7 +55,6 @@ AFRAME.registerSystem('painter', {
       this.brushSystem.loadFromUrl(urlParams.url || urlParams.urljson, isBinary);
       document.getElementById('logo').setAttribute('visible', false);
       document.getElementById('acamera').setAttribute('orbit-controls', 'position', '0 1.6 3');
-      document.getElementById('apainter-logo').classList.remove('hidden');
       //document.getElementById('apainter-author').classList.remove('hidden'); // not used yet
     }
 
@@ -93,7 +92,7 @@ AFRAME.registerSystem('painter', {
             logo.setAttribute('visible', false);
           })
           .onUpdate(function () {
-            mesh.children[0].material.opacity = this.alpha;
+            mesh.material.opacity = this.alpha;
           }).start();
         self.startPainting = true;
       }

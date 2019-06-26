@@ -13,7 +13,7 @@ Atlas.prototype = {
         convertU: function (u) {
           var totalSize = AtlasJSON.meta.size;
           var data = AtlasJSON.frames[filename];
-          if (u > 1 || u < 0) {
+          if (u > 1 || u < 0) {l
             u = 0;
           }
           return data.frame.x / totalSize.w + u * data.frame.w / totalSize.w;
