@@ -114,9 +114,37 @@ AFRAME.registerComponent('brush', {
 
         for (i = 0; i < this.currentStrokes.length; i++) {
           var tempPointer = new THREE.Vector3().copy(pointerPosition);
-          tempPointer.y = tempPointer.y + 0.2 * i;
+          // tempPointer.y = tempPointer.y + 0.2 * i;
 
-          this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
+          if (i !== 0) {
+            var wedge = document.querySelector('a-cone');
+
+
+            var direction = new THREE.Vector3( 0, 0, 1 );
+
+            console.log('quaternion', wedge.object3D.quaternion);
+
+            direction.applyQuaternion(wedge.object3D.quaternion).normalize();
+
+            console.log('direction', direction);
+
+            var arrowHelper = new THREE.ArrowHelper( direction, wedge.getAttribute('position'), 1, 0xffff00 );
+            console.log("arrow helper", arrowHelper);
+
+            this.el.sceneEl.object3D.add(arrowHelper);
+
+
+
+
+
+            //
+            // var axis = new THREE.Vector3(0,0,0.05);
+            // var angle = Math.PI/2 * i;
+            //
+            // tempPointer.applyAxisAngle(axis, angle);
+          }
+
+          // this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
         }
       }
     };
