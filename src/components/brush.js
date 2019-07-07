@@ -122,9 +122,9 @@ AFRAME.registerComponent('brush', {
 
             var direction = new THREE.Vector3( 0, 0, 1 );
 
-            console.log('quaternion', wedge.object3D.quaternion);
+            console.log('rotation', wedge.object3D.rotation);
 
-            direction.applyQuaternion(wedge.object3D.quaternion).normalize();
+            direction.applyEuler(wedge.object3D.rotation).normalize();
 
             console.log('direction', direction);
 

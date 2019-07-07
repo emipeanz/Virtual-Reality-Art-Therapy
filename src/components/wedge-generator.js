@@ -114,11 +114,11 @@ AFRAME.registerComponent('wedge-generator', {
         this.data.currentRadius = this.data.currentHeight *  Math.tan(Math.PI / this.data.currentPetalNum);
 
         var rotation = this.camera.getAttribute('rotation');
-        rotation.x = Math.random() * 360;
-        rotation.z = 0;
-        rotation.y = rotation.y;
+        rotation.z = Math.random() * 360;
+        rotation.x = 0;
+        rotation.y = rotation.y + 90;
 
-        wedge.setAttribute("scale", "0.2 1 1");
+        wedge.setAttribute("scale", "1 1 0.2");
         wedge.setAttribute("position", position);
         wedge.setAttribute("height", this.data.currentHeight);
         wedge.setAttribute("color", "#ffffff");
