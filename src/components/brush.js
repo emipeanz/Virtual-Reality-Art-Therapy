@@ -76,7 +76,7 @@ AFRAME.registerComponent('brush', {
         self.active = false;
         self.currentStrokes = [];
       }
-    })
+    });
 
     this.el.sceneEl.addEventListener('wedge-generated', function(evt){
       self.currentPetalNum = evt.detail.data.currentPetalNum;
