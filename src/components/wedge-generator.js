@@ -115,7 +115,8 @@ AFRAME.registerComponent('wedge-generator', {
         this.data.currentRadius = this.data.currentHeight *  Math.tan(Math.PI / this.data.currentPetalNum);
 
         var rotation = this.camera.getAttribute('rotation');
-        rotation.z = Math.random() * 360;
+        rotation.z = 0;
+        // rotation.z = Math.random() * 360;
         rotation.x = 0;
         rotation.y = rotation.y + 90;
 
