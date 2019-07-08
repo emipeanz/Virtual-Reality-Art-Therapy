@@ -126,6 +126,7 @@ AFRAME.registerComponent('wedge-generator', {
         wedge.setAttribute("color", "#ffffff");
         wedge.setAttribute("opacity", "0.2");
         wedge.setAttribute("geometry" , "radiusBottom:" + this.data.currentRadius);
+        wedge.setAttribute("geometry" , "radiusTop:" + 0.001);
         wedge.setAttribute('material',  "wireframe:true");
         wedge.setAttribute('rotation', rotation);
 
