@@ -123,6 +123,7 @@ AFRAME.registerBrush = function (name, definition, options) {
           }
         }
       };
+
       this.displayBoundingBox = function(bbox) {
         var oldBox = document.querySelector('a-box');
         if(oldBox == null) {

@@ -118,7 +118,7 @@ AFRAME.registerComponent('wedge-generator', {
         rotation.z = 0;
         // rotation.z = Math.random() * 360;
         rotation.x = 0;
-        rotation.y = rotation.y + 90;
+        rotation.y = rotation.y;
 
         wedge.setAttribute("scale", "1 1 0.2");
         wedge.setAttribute("position", position);
@@ -152,8 +152,8 @@ AFRAME.registerComponent('wedge-generator', {
         var sizePulse = document.createElement('a-animation');
         sizePulse.setAttribute("attribute", "scale");
         sizePulse.setAttribute("dur", "300");
-        sizePulse.setAttribute("to", "0.23 1.15 1.15"); //Increase scale by 15%
-        sizePulse.setAttribute("from", "0.2 1 1");
+        sizePulse.setAttribute("to", "1.15 1.15 0.23"); //Increase scale by 15%
+        sizePulse.setAttribute("from", "1 1 0.2");
         sizePulse.setAttribute("repeat", "1");
         sizePulse.setAttribute("direction", "alternate");
         sizePulse.setAttribute("begin", "pulse");
