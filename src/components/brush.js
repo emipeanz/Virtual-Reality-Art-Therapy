@@ -156,16 +156,16 @@ AFRAME.registerComponent('brush', {
 
   // Function finds a random color, and sets the hue variable which is the color 'theme' for the petal
   setRandomColor: function() {
-    this.currentHue = Math.floor(360 * Math.random())
+    this.currentHue = Math.floor(720 * Math.random()) % 360
     this.hue = this.currentHue;
     this.sat = Math.floor(25 + 70 * Math.random());
-    this.light = Math.floor(40 + 45 * Math.random());
+    this.light = Math.floor(40 + 40 * Math.random());
     this.setColor(this.hue, this.sat, this.light);
   },
 
   // Changes the stroke color based on what the hue is
   updateColor: function() {
-    var nextHue = Math.floor(Math.random() * 60 + this.currentHue - 30);
+    var nextHue = Math.floor(Math.random() * 100 + this.currentHue - 50);
     this.hue = Math.min(Math.max(nextHue, 0), 360);
     this.setColor(this.hue, this.sat, this.light);
   },
