@@ -26,14 +26,13 @@ AFRAME.registerComponent('wedge-generator', {
 
         //Resting position of controller, used as the origin of the bounding box
         this.originControllerPosition = new THREE.Vector3();
+        this.originHeadsetPosition = new THREE.Vector3();
         this.originSet = false;
 
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
         this.userControlledWedgeLocation = true;
-
-        //Position of the headset and controller are tracked
-        this.camera = document.querySelector('#acamera');
         this.controllerPosition = new THREE.Vector3();
+        this.camera;
 
         //Update position of controller stored when it changes
         el.sceneEl.addEventListener('position-changed', function (evt) {
@@ -44,6 +43,7 @@ AFRAME.registerComponent('wedge-generator', {
             // Set origin of bounded box to location of controller on first click
             if (!self.originSet) {
                 self.originControllerPosition = self.controllerPosition.clone();
+                self.originHeadsetPosition = document.querySelector('#acamera').getAttribute('position');
                 self.originSet = true;
             }
             // generate a wedge
@@ -114,11 +114,9 @@ AFRAME.registerComponent('wedge-generator', {
         //Radius is calculated based on number of petals
         this.data.currentRadius = this.data.currentHeight *  Math.tan(Math.PI / this.data.currentPetalNum);
 
-        var rotation = this.camera.getAttribute('rotation');
-        rotation.z = 0;
-        // rotation.z = Math.random() * 360;
-        rotation.x = 0;
-        rotation.y = rotation.y;
+        var rotation = new THREE.Vector3(0, 0, 0);
+        rotation.y = 90 -
+            (Math.atan((position.z - this.originHeadsetPosition.z)/(position.x - this.originHeadsetPosition.x)))*(180/Math.PI);
 
         wedge.setAttribute("scale", "1 1 0.2");
         wedge.setAttribute("position", position);
@@ -160,10 +158,5 @@ AFRAME.registerComponent('wedge-generator', {
         sizePulse.setAttribute("autoplay", "false");
 
         wedge.appendChild(sizePulse);
-    },
-
-    tick: function() {
-        // Track the position of the headset
-        this.camera = document.querySelector('#acamera');
     }
-})
+});
