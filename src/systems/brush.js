@@ -154,6 +154,7 @@ AFRAME.registerBrush = function (name, definition, options) {
         if((bbox.containsPoint(pointerPosition) && petalId === 0) || ((petalId !== 0 ) && controllerWithinBounds)) {
           controllerWithinBounds = true;
           vibrate = false;
+          wedge.emit('paint-inside');
           if ((this.data.prevPosition && this.data.prevPosition.distanceTo(position) <= this.options.spacing) ||
               this.options.maxPoints !== 0 && this.data.numPoints >= this.options.maxPoints) {
             return;
@@ -176,10 +177,13 @@ AFRAME.registerBrush = function (name, definition, options) {
           // If a stroke has just begun, and is out of bounds vibrate to inform the user
           wedge.emit('pulse');
           this.vibrateController();
+          wedge.emit('paint-outside');
         }
       } else if (vibrate) {
         // If there is not yet a cone, the user is out of bounds. Vibrate to inform the user
         this.vibrateController();
+        var drawing = document.querySelector('.a-drawing');
+        drawing.sceneEl.emit('paint-outside');
       }
     };
   }
