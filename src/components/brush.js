@@ -112,19 +112,27 @@ AFRAME.registerComponent('brush', {
       if (this.currentStrokes[0] && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
 
+        //Points are rotated relative to the position of the wedge on screen
         var wedge = document.querySelector('a-cone');
         var wedgePos = wedge.getAttribute('position').clone();
 
+        //Generate an axis of rotation based on the rotation of the wedge
         var axis = new THREE.Vector3(0, 0, 1);
         axis.applyEuler(wedge.object3D.rotation).normalize();
 
         for (i = 0; i < this.currentStrokes.length; i++) {
+          //Find the position of the point relative to the wedge
           var tempPointer = new THREE.Vector3().copy(pointerPosition);
           var relativePos = tempPointer.clone().add(wedgePos.clone().negate());
 
+          //Rotate each duplicated wedge through an angle proportional to the total number of wedges.
           if (i !== 0) {
             var angle = ((2 * Math.PI) / this.currentPetalNum) * i;
+
+            //Rotate the current point about an axis relative to the origin
             relativePos.applyAxisAngle(axis, angle);
+
+            //Translate the point back to original position relative to the wedge
             tempPointer.addVectors(wedgePos, relativePos);
           }
 
