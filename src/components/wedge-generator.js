@@ -43,10 +43,7 @@ AFRAME.registerComponent('wedge-generator', {
             // Set origin of bounded box to location of controller on first click
             if (!self.originSet) {
                 self.originControllerPosition = self.controllerPosition.clone();
-                self.camera = document.querySelector('#acamera');
-                console.log('camera = ', self.camera);
-                self.originHeadsetPosition = self.camera.getAttribute('position');
-                console.log('headset location = ', self.originHeadsetPosition);
+                self.originHeadsetPosition = document.querySelector('#acamera').getAttribute('position');
                 self.originSet = true;
             }
             // generate a wedge
