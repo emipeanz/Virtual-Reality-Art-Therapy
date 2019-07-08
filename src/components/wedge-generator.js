@@ -4,7 +4,7 @@ AFRAME.registerComponent('wedge-generator', {
         minHeight: { default: 0.1 },
         maxHeight: { default: 0.3 },
         minPetalNum: { default: 4 },
-        maxPetalNum: { default: 4 },
+        maxPetalNum: { default: 6 },
         currentPetalNum: { default: 4},
         currentHeight: { default: 0.1 },
         currentRadius: { default: 0.1 }

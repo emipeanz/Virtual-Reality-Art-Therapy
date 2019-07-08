@@ -123,7 +123,7 @@ AFRAME.registerComponent('brush', {
           var relativePos = tempPointer.clone().add(wedgePos.clone().negate());
 
           if (i !== 0) {
-            var angle = ((2 * Math.PI) / 4) * i;
+            var angle = ((2 * Math.PI) / this.currentPetalNum) * i;
             relativePos.applyAxisAngle(axis, angle);
             tempPointer.addVectors(wedgePos, relativePos);
           }
