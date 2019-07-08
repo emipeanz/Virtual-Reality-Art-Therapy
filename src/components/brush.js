@@ -112,33 +112,48 @@ AFRAME.registerComponent('brush', {
       if (this.currentStrokes[0] && this.active) {
         var pointerPosition = this.system.getPointerPosition(this.position, rotation);
 
+        var wedge = document.querySelector('a-cone');
+        var wedgePos = wedge.getAttribute('position').clone();
+
+        var axis = new THREE.Vector3(0, 0, 1);
+        axis.applyEuler(wedge.object3D.rotation).normalize();
+
         for (i = 0; i < this.currentStrokes.length; i++) {
           var tempPointer = new THREE.Vector3().copy(pointerPosition);
+          var relativePos = tempPointer.clone().add(wedgePos.clone().negate());
+
 
           if (i !== 0) {
 
-            var tempTempPointer = tempPointer.clone();
-            var wedge = document.querySelector('a-cone');
-            var wedgePos = wedge.getAttribute('position').clone();
-
-            var axis = new THREE.Vector3( 0, 0, 1 );
-            axis.applyEuler(wedge.object3D.rotation).normalize();
 
             // var arrowHelper = new THREE.ArrowHelper( axis, wedgePos, 1, 0xffff00 );
             // this.el.sceneEl.object3D.add(arrowHelper);
 
             var angle = ((2 * Math.PI) / 4) * i;
-            var relativePos = tempTempPointer.add(wedgePos.negate());
-
-
             // var arrowHelper = new THREE.ArrowHelper( relativePos, new THREE.Vector3(0,0,0), 1, 0xffff00 );
             // var dirHelper = new THREE.ArrowHelper( axis, new THREE.Vector3(0,0,0), 1, 0xffffff );
+            console.log(i)
+            console.log("relativepos", relativePos);
             relativePos.applyAxisAngle(axis, angle);
+            console.log("relativepos", relativePos),'\n';
+
             //
             // this.el.sceneEl.object3D.add(arrowHelper);
             // this.el.sceneEl.object3D.add(dirHelper);
+            if (i == 2) {
+              // console.log("relative pos", relativePos.y)
+              // console.log("i:", i, "relative pos", relativePos.y)
+              // console.log("temp pointer", tempPointer.y);
+            }
 
-            tempPointer = relativePos.add(this.position);
+            // tempPointer.addVectors(tempPointer, relativePos);
+            tempPointer.addVectors(wedgePos, relativePos);
+            // tempPointer = relativePos;
+
+            if (i == 2) {
+              console.log('temp pointer', tempPointer)
+            }
+
           }
 
           this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
