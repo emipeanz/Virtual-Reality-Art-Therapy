@@ -10,8 +10,13 @@ AFRAME.registerComponent('metrics', {
         var data = this.data; //get all the data from the schema.
         var el = this.el; //get reference to the entity.
 
+        this.paintStrokesOutside = 0;
+        this.paintStrokesInside = 0;
+
         this.gestureCount = 0;
         this.strokeActive = false;  // This will be true when a stroke is currently active
+
+        this.firstPoint = true;
         
         // The following variables are used to record the amount of "active time" for a session
         this.startTime = new Date().getTime();
@@ -27,6 +32,7 @@ AFRAME.registerComponent('metrics', {
             self.strokeActive = evt.detail;
 
             if (self.strokeActive) {
+                self.firstPoint = true;
                 self.gestureCount++;
                 var lengthOfPause = new Date().getTime() - self.startTimeOfPause;
                 self.totalIdleTime = self.totalIdleTime + lengthOfPause;
@@ -34,6 +40,18 @@ AFRAME.registerComponent('metrics', {
             else {
                 self.startTimeOfPause = new Date().getTime();
             }
+        });
+
+        el.sceneEl.addEventListener('paint-outside', function (evt) {
+            self.paintStrokesOutside++;
+        });
+
+        el.sceneEl.addEventListener('paint-inside', function (evt) {
+            if(self.strokeActive && self.firstPoint){
+                self.paintStrokesInside++;
+                self.firstPoint = false;
+            }
+
         });
     },
 
