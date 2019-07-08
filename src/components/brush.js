@@ -114,37 +114,34 @@ AFRAME.registerComponent('brush', {
 
         for (i = 0; i < this.currentStrokes.length; i++) {
           var tempPointer = new THREE.Vector3().copy(pointerPosition);
-          // tempPointer.y = tempPointer.y + 0.2 * i;
 
           if (i !== 0) {
+
+            var tempTempPointer = tempPointer.clone();
             var wedge = document.querySelector('a-cone');
+            var wedgePos = wedge.getAttribute('position').clone();
+
+            var axis = new THREE.Vector3( 0, 0, 1 );
+            axis.applyEuler(wedge.object3D.rotation).normalize();
+
+            // var arrowHelper = new THREE.ArrowHelper( axis, wedgePos, 1, 0xffff00 );
+            // this.el.sceneEl.object3D.add(arrowHelper);
+
+            var angle = ((2 * Math.PI) / 4) * i;
+            var relativePos = tempTempPointer.add(wedgePos.negate());
 
 
-            var direction = new THREE.Vector3( 0, 0, 1 );
-
-            console.log('rotation', wedge.object3D.rotation);
-
-            direction.applyEuler(wedge.object3D.rotation).normalize();
-
-            console.log('direction', direction);
-
-            var arrowHelper = new THREE.ArrowHelper( direction, wedge.getAttribute('position'), 1, 0xffff00 );
-            console.log("arrow helper", arrowHelper);
-
-            this.el.sceneEl.object3D.add(arrowHelper);
-
-
-
-
-
+            // var arrowHelper = new THREE.ArrowHelper( relativePos, new THREE.Vector3(0,0,0), 1, 0xffff00 );
+            // var dirHelper = new THREE.ArrowHelper( axis, new THREE.Vector3(0,0,0), 1, 0xffffff );
+            relativePos.applyAxisAngle(axis, angle);
             //
-            // var axis = new THREE.Vector3(0,0,0.05);
-            // var angle = Math.PI/2 * i;
-            //
-            // tempPointer.applyAxisAngle(axis, angle);
+            // this.el.sceneEl.object3D.add(arrowHelper);
+            // this.el.sceneEl.object3D.add(dirHelper);
+
+            tempPointer = relativePos.add(this.position);
           }
 
-          // this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
+          this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
         }
       }
     };

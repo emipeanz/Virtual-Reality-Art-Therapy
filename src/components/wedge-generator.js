@@ -94,6 +94,7 @@ AFRAME.registerComponent('wedge-generator', {
 
     generateNewWedge: function(){
         var wedge = document.createElement('a-cone')
+        console.log("generate wedge")
 
         // Depending on the boolean variable, let the users place the wedge where they want, or randomly
         if(this.userControlledWedgeLocation){
