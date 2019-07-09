@@ -4,7 +4,7 @@ AFRAME.registerComponent('wedge-generator', {
         minHeight: { default: 0.1 },
         maxHeight: { default: 0.3 },
         minPetalNum: { default: 4 },
-        maxPetalNum: { default: 6 },
+        maxPetalNum: { default: 10 },
         currentPetalNum: { default: 4},
         currentHeight: { default: 0.1 },
         currentRadius: { default: 0.1 }
@@ -93,7 +93,6 @@ AFRAME.registerComponent('wedge-generator', {
 
     generateNewWedge: function() {
         var wedge = document.createElement('a-cone')
-        console.log("generate wedge")
 
         // Depending on the boolean variable, let the users place the wedge where they want, or randomly
         if(this.userControlledWedgeLocation){
