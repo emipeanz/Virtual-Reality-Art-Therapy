@@ -114,33 +114,38 @@ AFRAME.registerComponent('brush', {
 
         //Points are rotated relative to the position of the wedge on screen
         var wedge = document.querySelector('a-cone');
-        var wedgePos = wedge.getAttribute('position').clone();
-        var wedgeHeight = wedge.getAttribute('height');
+        if(wedge !== null){
+          var wedgePos = wedge.getAttribute('position').clone();
+          var wedgeHeight = wedge.getAttribute('height');
 
-        //Generate an axis of rotation based on the rotation of the wedge
-        var axis = new THREE.Vector3(0, 0, 1);
-        axis.applyEuler(wedge.object3D.rotation).normalize();
+          //Generate an axis of rotation based on the rotation of the wedge
+          var axis = new THREE.Vector3(0, 0, 1);
+          axis.applyEuler(wedge.object3D.rotation).normalize();
 
-        //Find the position of the top of the wedge
-        var wedgeTip = new THREE.Vector3(wedgePos.x, wedgePos.y + wedgeHeight/2, wedgePos.z);
+          //Find the position of the top of the wedge
+          var wedgeTip = new THREE.Vector3(wedgePos.x, wedgePos.y + wedgeHeight/2, wedgePos.z);
 
-        for (i = 0; i < this.currentStrokes.length; i++) {
-          //Find the position of the point relative to the wedge
-          var tempPointer = new THREE.Vector3().copy(pointerPosition);
-          var relativePos = tempPointer.clone().add(wedgeTip.clone().negate());
+          for (i = 0; i < this.currentStrokes.length; i++) {
+            //Find the position of the point relative to the wedge
+            var tempPointer = new THREE.Vector3().copy(pointerPosition);
+            var relativePos = tempPointer.clone().add(wedgeTip.clone().negate());
 
-          //Rotate each duplicated wedge through an angle proportional to the total number of wedges.
-          if (i !== 0) {
-            var angle = ((2 * Math.PI) / this.currentPetalNum) * i;
+            //Rotate each duplicated wedge through an angle proportional to the total number of wedges.
+            if (i !== 0) {
+              var angle = ((2 * Math.PI) / this.currentPetalNum) * i;
 
-            //Rotate the current point about an axis relative to the origin
-            relativePos.applyAxisAngle(axis, angle);
+              //Rotate the current point about an axis relative to the origin
+              relativePos.applyAxisAngle(axis, angle);
 
-            //Translate the point back to original position relative to the wedge
-            tempPointer.addVectors(wedgeTip, relativePos);
+              //Translate the point back to original position relative to the wedge
+              tempPointer.addVectors(wedgeTip, relativePos);
+            }
+
+            this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
           }
-
-          this.currentStrokes[i].addPoint(this.position, rotation, tempPointer, this.sizeModifier, time, this.currentStrokes[i].data.petalId);
+        }
+        else{
+          this.currentStrokes[0].addPoint(this.position, rotation, pointerPosition, this.sizeModifier, time, this.currentStrokes[0].data.petalId);
         }
       }
     };

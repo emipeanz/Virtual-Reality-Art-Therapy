@@ -2,7 +2,7 @@ function SharedBufferGeometry (material, primitiveMode) {
   this.material = material;
   this.primitiveMode = primitiveMode;
 
-  this.maxBufferSize = 1000000;
+  this.maxBufferSize = 100000;
   this.geometries = [];
   this.current = null;
   this.addBuffer(false);

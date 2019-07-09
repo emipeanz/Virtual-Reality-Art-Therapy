@@ -30,17 +30,24 @@ var onLoaded = require('../onloaded.js');
       alphaTest: 0.5
     };
 
-    buffers = []
+    buffers = [];
 
     // Make a shared buffer for each 'petal', lines are separately drawn on the shared buffers, not all on one single buffer
     for(i = 0; i < 10; i++){
         buffers.push(sharedBufferGeometryManager.addSharedBuffer('strip-shaded-' + i, new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode));
     }
+
+    document.addEventListener('wedge-generated', function(evt){
+      for(i = 0; i < evt.detail.data.currentPetalNum; i++){
+        buffers[i] = sharedBufferGeometryManager.addSharedBuffer('strip-shaded-' + i, new THREE.MeshStandardMaterial(optionsStandard), THREE.TriangleStripDrawMode);
+      }
+    })
   });
 
   var line = {
 
     init: function (color, brushSize) {
+
       for (i = 0; i < buffers.length; i++) {
         buffers[i].restartPrimitive();
       }
@@ -51,6 +58,7 @@ var onLoaded = require('../onloaded.js');
 
       this.first = true;
     },
+
     remove: function () {
       this.sharedBuffer.remove(this.prevIdx, this.idx);
     },

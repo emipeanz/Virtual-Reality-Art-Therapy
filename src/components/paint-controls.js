@@ -181,7 +181,6 @@ AFRAME.registerComponent('paint-controls', {
   },
 
   onModelLoaded: function (evt) {
-    console.log('onModelLoad');
     if (evt.target !== this.el) { return; }
 
     var controllerObject3D = evt.detail.model;
