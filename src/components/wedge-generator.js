@@ -32,7 +32,6 @@ AFRAME.registerComponent('wedge-generator', {
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
         this.userControlledWedgeLocation = true;
         this.controllerPosition = new THREE.Vector3();
-        this.camera;
 
         //Update position of controller stored when it changes
         el.sceneEl.addEventListener('position-changed', function (evt) {
@@ -43,7 +42,7 @@ AFRAME.registerComponent('wedge-generator', {
             // Set origin of bounded box to location of controller on first click
             if (!self.originSet) {
                 self.originControllerPosition = self.controllerPosition.clone();
-                self.originHeadsetPosition = document.querySelector('#acamera').getAttribute('position');
+                self.originHeadsetPosition = self.controllerPosition.clone();
                 self.originSet = true;
             }
             // generate a wedge
@@ -92,7 +91,7 @@ AFRAME.registerComponent('wedge-generator', {
         }
     },
 
-    generateNewWedge: function(){
+    generateNewWedge: function() {
         var wedge = document.createElement('a-cone')
         console.log("generate wedge")
 
