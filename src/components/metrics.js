@@ -26,7 +26,8 @@ AFRAME.registerComponent('metrics', {
         this.totalActiveTime;
         // "Idle time" is the time spent not painting
         this.totalIdleTime = this.startTime - this.startTime;
-
+        // Total reach
+        this.totalReach = 0;
 
         el.sceneEl.addEventListener('stroke-paint-changed', function (evt) {
             self.strokeActive = evt.detail;
@@ -53,6 +54,12 @@ AFRAME.registerComponent('metrics', {
             }
 
         });
+
+        el.sceneEl.addEventListener('wedge-generated', function (evt) {
+            //Calculate the distance between the origin and the wedge
+            var distance = evt.detail.data.currentWedgePosition.distanceTo(evt.detail.data.originControllerPosition);
+            self.totalReach = self.totalReach + distance;
+        });
     },
 
     getTotalTimeElapsed: function() {
@@ -70,6 +77,7 @@ AFRAME.registerComponent('metrics', {
         console.log("")
         console.log("Active time:", this.msToTime(this.totalActiveTime))
         console.log("Gesture count:", this.gestureCount)
+        console.log("Total reach:", this.totalReach)
     },
 
     msToTime: function(s) {
