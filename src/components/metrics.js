@@ -37,6 +37,8 @@ AFRAME.registerComponent('metrics', {
         el.sceneEl.addEventListener('toggle-mode', function(evt){
             self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
         });
+        // Total reach
+        this.totalReach = 0;
 
         el.sceneEl.addEventListener('stroke-paint-changed', function (evt) {
             self.strokeActive = evt.detail;
@@ -64,8 +66,14 @@ AFRAME.registerComponent('metrics', {
 
         });
 
-        document.getElementById('export-button').addEventListener('click', function(){
+        document.getElementById('export-button').addEventListener('click', function() {
             self.toCSV();
+        });
+
+        el.sceneEl.addEventListener('wedge-generated', function (evt) {
+            //Calculate the distance between the origin and the wedge
+            var distance = evt.detail.data.currentWedgePosition.distanceTo(evt.detail.data.originControllerPosition);
+            self.totalReach = self.totalReach + distance;
         });
     },
 
@@ -89,6 +97,7 @@ AFRAME.registerComponent('metrics', {
         console.log("Strokes Painted Inside Wedge:", this.paintStrokesInside);
         console.log("Strokes Painted Outside Wedge:", this.paintStrokesOutside);
         console.log("Wedge is user controlled:", this.userControlledWedgeLocation);
+        console.log("Total reach:", this.totalReach)
     },
 
     msToTime: function(s) {
