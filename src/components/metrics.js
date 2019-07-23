@@ -18,12 +18,14 @@ AFRAME.registerComponent('metrics', {
         var data = this.data; //get all the data from the schema.
         var el = this.el; //get reference to the entity.
 
+        // Set up all metrics variables initally
+        //  paint stroke counts
         this.paintStrokesOutside = 0;
         this.paintStrokesInside = 0;
 
+        //  gesture count related
         this.gestureCount = 0;
         this.strokeActive = false;  // This will be true when a stroke is currently active
-
         this.firstPoint = true;
         
         // The following variables are used to record the amount of "active time" for a session
@@ -35,12 +37,13 @@ AFRAME.registerComponent('metrics', {
         // "Idle time" is the time spent not painting
         this.totalIdleTime = this.startTime - this.startTime;
 
-        el.sceneEl.addEventListener('toggle-mode', function(evt){
-            self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
-        });
         // Total reach
         this.totalReach = 0;
         this.maxReach = 0;
+
+        el.sceneEl.addEventListener('toggle-mode', function(evt){
+            self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
+        });
 
         el.sceneEl.addEventListener('stroke-paint-changed', function (evt) {
             self.strokeActive = evt.detail;
@@ -81,6 +84,14 @@ AFRAME.registerComponent('metrics', {
                 self.maxReach = distance;
             }
 
+        });
+
+        document.getElementById('clear-button').addEventListener('click', function() {
+            self.clearMetrics();
+        });
+
+        document.getElementById('print-button').addEventListener('click', function() {
+            self.printMetrics();
         });
     },
 
@@ -147,6 +158,21 @@ AFRAME.registerComponent('metrics', {
         document.body.appendChild(link); // Required for FF
 
         link.click(); // This will download the data file named "my_data.csv".
+    },
+
+    clearMetrics: function() {
+        this.paintStrokesOutside = 0;
+        this.paintStrokesInside = 0;
+        this.gestureCount = 0;
+        this.strokeActive = false;  // This will be true when a stroke is currently active
+        this.firstPoint = true;
+        this.startTime = new Date().getTime();
+        this.startTimeOfPause = new Date().getTime();
+        this.totalActiveTime = this.startTime - this.startTime;
+        this.totalIdleTime = this.startTime - this.startTime;
+        this.totalReach = 0;
+        this.maxReach = 0;
+
     }
 
 })

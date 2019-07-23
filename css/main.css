@@ -90,3 +90,10 @@
   font: 18px arial, sans-serif;
   color: #e42b5a;
 }
+
+.developer-button {
+  float: right;
+  height: 32px;
+  margin-right: 5px;
+  margin-top: 5px
+}
