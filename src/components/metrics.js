@@ -31,7 +31,7 @@ AFRAME.registerComponent('metrics', {
         this.startTimeOfPause = new Date().getTime();
         
         // "Active time" is the time spent painting
-        this.totalActiveTime;
+        this.totalActiveTime = this.startTime - this.startTime;
         // "Idle time" is the time spent not painting
         this.totalIdleTime = this.startTime - this.startTime;
 
@@ -100,7 +100,7 @@ AFRAME.registerComponent('metrics', {
         console.log("Active time:", this.msToTime(this.totalActiveTime));
         console.log("Passive Time:", this.msToTime(this.totalIdleTime));
         console.log("Total Time:", this.msToTime(this.totalIdleTime + this.totalActiveTime));
-        console.log("Gesture count:", this.gestureCount)
+        console.log("Gesture count:", this.gestureCount);
         console.log("Strokes Painted Inside Wedge:", this.paintStrokesInside);
         console.log("Strokes Painted Outside Wedge:", this.paintStrokesOutside);
         console.log("Wedge is user controlled:", this.userControlledWedgeLocation);
