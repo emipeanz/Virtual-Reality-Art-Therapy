@@ -1,9 +1,9 @@
 {
   "lang": "en",
   "dir": "ltr",
-  "name": "A-Painter",
-  "short_name": "A-Painter",
-  "description": "Paint in VR in your browser. Powered by A-Frame.",
+  "name": "Kaleidoscope Experience",
+  "short_name": "Kaleidoscope Experience",
+  "description": "Prototype VR Painting Application for Stroke Therapy",
   "start_url": "./?src=manifest",
   "scope": "./",
   "display": "fullscreen",

@@ -12,5 +12,11 @@ module.exports = function (callback) {
     } else {
       sceneEl.addEventListener('loaded', callback());
     }
+    document.getElementById('clear-screen-button').addEventListener('click', function() {
+      var drawing = document.querySelector('.a-drawing');
+      if(drawing!== null && drawing !== undefined){
+        drawing.parentElement.removeChild(drawing);
+      }
+    });
   }
 }

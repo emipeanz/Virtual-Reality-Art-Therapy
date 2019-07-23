@@ -54,6 +54,16 @@ AFRAME.registerComponent('wedge-generator', {
                 self.generateNewWedge()
             }
         })
+
+        document.getElementById('mode-button').addEventListener('click', function(){
+            self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
+            if(self.userControlledWedgeLocation){
+                document.getElementById('mode-button').innerHTML = 'Change Wedge Generation to Computer Controlled';
+            } else{
+                document.getElementById('mode-button').innerHTML = 'Change Wedge Generation to User Controlled';
+            }
+            self.el.emit('toggle-mode');
+        });
     },
 
     //Generate a wireframe visualisation of the bounding box wedges can be generated in.
