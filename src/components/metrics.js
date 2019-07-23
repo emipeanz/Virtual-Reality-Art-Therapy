@@ -3,8 +3,15 @@ AFRAME.registerComponent('metrics', {
 
     schema: {  },
 
+    // Metrics class for
+        // number of strokes painted inside and outside wedge
+        // number of gestures ie. strokes
+        // active, passive and total time used
+        // wedge mode
     init: function(){
-        var self = this
+        var self = this;
+
+        this.userControlledWedgeLocation = true;
         
         //Set up initial state and variables
         var data = this.data; //get all the data from the schema.
@@ -27,6 +34,9 @@ AFRAME.registerComponent('metrics', {
         // "Idle time" is the time spent not painting
         this.totalIdleTime = this.startTime - this.startTime;
 
+        el.sceneEl.addEventListener('toggle-mode', function(evt){
+            self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
+        });
 
         el.sceneEl.addEventListener('stroke-paint-changed', function (evt) {
             self.strokeActive = evt.detail;
@@ -53,6 +63,10 @@ AFRAME.registerComponent('metrics', {
             }
 
         });
+
+        document.getElementById('export-button').addEventListener('click', function(){
+            self.toCSV();
+        });
     },
 
     getTotalTimeElapsed: function() {
@@ -67,9 +81,14 @@ AFRAME.registerComponent('metrics', {
 
     // Useful for debugging purposes
     printMetrics: function() {
-        console.log("")
-        console.log("Active time:", this.msToTime(this.totalActiveTime))
+        console.log("");
+        console.log("Active time:", this.msToTime(this.totalActiveTime));
+        console.log("Passive Time:", this.msToTime(this.totalIdleTime));
+        console.log("Total Time:", this.msToTime(this.totalIdleTime + this.totalActiveTime));
         console.log("Gesture count:", this.gestureCount)
+        console.log("Strokes Painted Inside Wedge:", this.paintStrokesInside);
+        console.log("Strokes Painted Outside Wedge:", this.paintStrokesOutside);
+        console.log("Wedge is user controlled:", this.userControlledWedgeLocation);
     },
 
     msToTime: function(s) {
@@ -81,6 +100,33 @@ AFRAME.registerComponent('metrics', {
         var hrs = (s - mins) / 60;
 
         return hrs + ':' + mins + ':' + secs + '.' + ms;
+    },
+
+    toCSV: function() {
+        let csvContent =  "data:text/csv;charset=utf-8,";
+
+        // add wedge mode
+        csvContent += "userPlacedWedge," + this.userControlledWedgeLocation + "\r\n";
+
+        // add number of strokes inside and outside
+        csvContent += "strokesInside," + this.paintStrokesInside + "\r\n";
+        csvContent += "strokesOutside," + this.paintStrokesOutside + "\r\n";
+
+        // add number of gestures
+        csvContent += "numberGestures," + this.gestureCount + "\r\n";
+
+        // add total, active and passive time
+        csvContent += "totalTime," + this.msToTime(this.totalActiveTime + this.totalIdleTime) + "\r\n";
+        csvContent += "activeTime," + this.msToTime(this.totalActiveTime) + "\r\n";
+        csvContent += "idleTime," + this.msToTime(this.totalIdleTime) + "\r\n";
+
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "metrics_data.csv");
+        document.body.appendChild(link); // Required for FF
+
+        link.click(); // This will download the data file named "my_data.csv".
     }
 
 })
