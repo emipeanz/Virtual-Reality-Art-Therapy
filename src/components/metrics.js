@@ -8,6 +8,7 @@ AFRAME.registerComponent('metrics', {
         // number of gestures ie. strokes
         // active, passive and total time used
         // wedge mode
+        // user reach
     init: function(){
         var self = this;
 
@@ -39,6 +40,7 @@ AFRAME.registerComponent('metrics', {
         });
         // Total reach
         this.totalReach = 0;
+        this.maxReach = 0;
 
         el.sceneEl.addEventListener('stroke-paint-changed', function (evt) {
             self.strokeActive = evt.detail;
@@ -74,6 +76,11 @@ AFRAME.registerComponent('metrics', {
             //Calculate the distance between the origin and the wedge
             var distance = evt.detail.data.currentWedgePosition.distanceTo(evt.detail.data.originControllerPosition);
             self.totalReach = self.totalReach + distance;
+
+            if(distance > self.maxReach) {
+                self.maxReach = distance;
+            }
+
         });
     },
 
@@ -128,6 +135,10 @@ AFRAME.registerComponent('metrics', {
         csvContent += "totalTime," + this.msToTime(this.totalActiveTime + this.totalIdleTime) + "\r\n";
         csvContent += "activeTime," + this.msToTime(this.totalActiveTime) + "\r\n";
         csvContent += "idleTime," + this.msToTime(this.totalIdleTime) + "\r\n";
+
+        // add reach metrics
+        csvContent += "totalReach," + this.totalReach + "\r\n";
+        csvContent += "maxReach," + this.maxReach + "\r\n";
 
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
