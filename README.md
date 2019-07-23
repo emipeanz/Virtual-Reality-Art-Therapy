@@ -3,7 +3,7 @@
 
 Paint in VR in your browser. [Read more!](https://blog.mozvr.com/a-painter/)
 
-![Visual Art Therapy](https://github.com/emipeanz/VR-Art-Therapy-700/blob/feature/documentation/assets/images/logo-new.png)
+![Visual Art Therapy](https://github.com/emipeanz/VR-Art-Therapy-700/blob/master/assets/images/logo-new.png)
 
 ## Users
 User guide for using Virtual Art Therapy
