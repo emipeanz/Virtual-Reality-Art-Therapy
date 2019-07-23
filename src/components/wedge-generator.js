@@ -30,7 +30,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.originSet = false;
 
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
-        this.userControlledWedgeLocation = false;
+        this.userControlledWedgeLocation = true;
         this.controllerPosition = new THREE.Vector3();
 
         //Update position of controller stored when it changes
@@ -52,6 +52,16 @@ AFRAME.registerComponent('wedge-generator', {
                 self.generateNewWedge()
             }
         })
+
+        document.getElementById('mode-button').addEventListener('click', function(){
+            self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
+            if(self.userControlledWedgeLocation){
+                document.getElementById('mode-button').innerHTML = 'Change Wedge Generation to Computer Controlled';
+            } else{
+                document.getElementById('mode-button').innerHTML = 'Change Wedge Generation to User Controlled';
+            }
+            self.el.emit('toggle-mode');
+        });
     },
 
     //Generate a wireframe visualisation of the bounding box wedges can be generated in.
