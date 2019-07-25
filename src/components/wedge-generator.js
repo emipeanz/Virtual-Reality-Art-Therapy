@@ -169,7 +169,14 @@ AFRAME.registerComponent('wedge-generator', {
         originToWedge.multiplyScalar(1.5);
         originToWedge.add(this.data.originControllerPosition.clone());
 
-        var formattedPos =  originToWedge.x + " 0 " + originToWedge.z;
+
+        //Randomly vary the vertical offset of the flower
+        var yOffset = Math.random() * 1.5 - 0.5;
+
+        //Final position of the drawing
+        var formattedPos =  originToWedge.x + " " + yOffset + " " + originToWedge.z;
+
+
 
         var moveUpAnimation = document.createElement('a-animation');
         moveUpAnimation.setAttribute('attribute', 'position');
