@@ -68,13 +68,16 @@ SharedBufferGeometry.prototype = {
     mesh.vertices = vertices;
 
     this.object3D = new THREE.Object3D();
-    var drawing = document.querySelector('.a-drawing');
-    if (!drawing) {
-      drawing = document.createElement('a-entity');
-      drawing.className = "a-drawing";
-      document.querySelector('a-scene').appendChild(drawing);
+    var drawings = document.querySelectorAll('.a-drawing');
+    var currentCanvas = drawings[drawings.length - 1];
+
+    if (!currentCanvas) {
+      currentCanvas = document.createElement('a-entity');
+      currentCanvas.className = "a-drawing";
+      currentCanvas.id = 0;
+      document.querySelector('a-scene').appendChild(currentCanvas);
     }
-    drawing.object3D.add(this.object3D);
+    currentCanvas.object3D.add(this.object3D);
 
     this.object3D.add(mesh);
 
