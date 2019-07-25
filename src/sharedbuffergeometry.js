@@ -71,6 +71,9 @@ SharedBufferGeometry.prototype = {
     var drawings = document.querySelectorAll('.a-drawing');
     var currentCanvas = drawings[drawings.length - 1];
 
+
+
+
     if (!currentCanvas) {
       currentCanvas = document.createElement('a-entity');
       currentCanvas.className = "a-drawing";
@@ -80,6 +83,9 @@ SharedBufferGeometry.prototype = {
     currentCanvas.object3D.add(this.object3D);
 
     this.object3D.add(mesh);
+
+
+
 
     geometry.setDrawRange(0, 0);
     geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3).setDynamic(true));

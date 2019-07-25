@@ -164,9 +164,25 @@ AFRAME.registerComponent('wedge-generator', {
 
     removeAndAnimateOldCanvasDrawing: function() {
 
+
+        //find vector between hand origin and current wedge
+        var originToWedge = new THREE.Vector3();
+        originToWedge.addVectors(this.data.currentWedgePosition.clone(), this.data.originControllerPosition.clone().negate());
+        console.log("originToWedge", originToWedge);
+
+        originToWedge.multiplyScalar(3);
+        console.log("scaled originToWedge", originToWedge);
+
+        var newPos = new THREE.Vector3();
+        newPos.addVectors(originToWedge, this.data.originControllerPosition.clone());
+        console.log("newPos", newPos);
+
+        var formattedPos =  newPos.x + " " + newPos.y + " " + newPos.z;
+
         var moveUpAnimation = document.createElement('a-animation');
         moveUpAnimation.setAttribute('attribute', 'position');
-        moveUpAnimation.setAttribute('to', '0 0.5 0');
+        moveUpAnimation.setAttribute('to', formattedPos);
+        // moveUpAnimation.setAttribute('easing', 'easeInQuad');
         moveUpAnimation.setAttribute('fill', 'forwards');
         moveUpAnimation.setAttribute("autoplay", "false");
         moveUpAnimation.setAttribute("dur", "700");
