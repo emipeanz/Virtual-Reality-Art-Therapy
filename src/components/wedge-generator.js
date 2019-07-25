@@ -152,7 +152,6 @@ AFRAME.registerComponent('wedge-generator', {
     addNewCanvas: function() {
         var oldWedge = document.querySelector('a-cone');
         if (oldWedge !== null) {
-            console.log('       makign subsquent canvases');
             drawing = document.createElement('a-entity');
             drawing.className = "a-drawing";
             drawing.id = this.data.drawingId;
