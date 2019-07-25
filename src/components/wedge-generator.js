@@ -164,28 +164,20 @@ AFRAME.registerComponent('wedge-generator', {
 
     removeAndAnimateOldCanvasDrawing: function() {
 
-
-        //find vector between hand origin and current wedge
+        //Find the relative position of the current wedge with the origin and extend it then reapply original offset.
         var originToWedge = new THREE.Vector3();
         originToWedge.addVectors(this.data.currentWedgePosition.clone(), this.data.originControllerPosition.clone().negate());
-        console.log("originToWedge", originToWedge);
-
         originToWedge.multiplyScalar(3);
-        console.log("scaled originToWedge", originToWedge);
+        originToWedge.add(this.data.originControllerPosition.clone());
 
-        var newPos = new THREE.Vector3();
-        newPos.addVectors(originToWedge, this.data.originControllerPosition.clone());
-        console.log("newPos", newPos);
-
-        var formattedPos =  newPos.x + " " + newPos.y + " " + newPos.z;
+        var formattedPos =  originToWedge.x + " " + originToWedge.y + " " + originToWedge.z;
 
         var moveUpAnimation = document.createElement('a-animation');
         moveUpAnimation.setAttribute('attribute', 'position');
         moveUpAnimation.setAttribute('to', formattedPos);
-        // moveUpAnimation.setAttribute('easing', 'easeInQuad');
         moveUpAnimation.setAttribute('fill', 'forwards');
         moveUpAnimation.setAttribute("autoplay", "false");
-        moveUpAnimation.setAttribute("dur", "700");
+        moveUpAnimation.setAttribute("dur", "1000");
 
         var oldCanvases = document.querySelectorAll('.a-drawing');
         var oldCanvas = oldCanvases[oldCanvases.length - 2];
