@@ -165,11 +165,11 @@ AFRAME.registerComponent('wedge-generator', {
 
         //Find the relative position of the current wedge with the origin and extend it then reapply original offset.
         var originToWedge = new THREE.Vector3();
-        originToWedge.addVectors(this.data.currentWedgePosition.clone(), this.data.originControllerPosition.clone().negate());
-        originToWedge.multiplyScalar(3);
+        originToWedge.addVectors(this.data.currentWedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
+        originToWedge.multiplyScalar(1.5);
         originToWedge.add(this.data.originControllerPosition.clone());
 
-        var formattedPos =  originToWedge.x + " " + originToWedge.y + " " + originToWedge.z;
+        var formattedPos =  originToWedge.x + " 0 " + originToWedge.z;
 
         var moveUpAnimation = document.createElement('a-animation');
         moveUpAnimation.setAttribute('attribute', 'position');
