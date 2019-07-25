@@ -166,7 +166,8 @@ AFRAME.registerComponent('wedge-generator', {
         //Find the relative position of the current wedge with the origin and extend it then reapply original offset.
         var originToWedge = new THREE.Vector3();
         originToWedge.addVectors(this.data.currentWedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
-        originToWedge.multiplyScalar(1.5);
+        //Distance to diverge by is between 1 and 2 metres
+        originToWedge.multiplyScalar(Math.random() + 1);
         originToWedge.add(this.data.originControllerPosition.clone());
 
 
