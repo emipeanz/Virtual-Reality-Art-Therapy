@@ -38,8 +38,8 @@ AFRAME.registerComponent('metrics', {
         this.totalIdleTime = this.startTime - this.startTime;
 
         // Total reach
-        this.totalReach = 0;
-        this.maxReach = 0;
+        this.reach = [];
+
 
         el.sceneEl.addEventListener('toggle-mode', function(evt){
             self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
@@ -80,9 +80,7 @@ AFRAME.registerComponent('metrics', {
             var distance = evt.detail.data.currentWedgePosition.distanceTo(evt.detail.data.originControllerPosition);
             self.totalReach = self.totalReach + distance;
 
-            if(distance > self.maxReach) {
-                self.maxReach = distance;
-            }
+            self.reach.push(distance);
 
         });
 
@@ -148,8 +146,7 @@ AFRAME.registerComponent('metrics', {
         csvContent += "idleTime," + this.msToTime(this.totalIdleTime) + "\r\n";
 
         // add reach metrics
-        csvContent += "totalReach," + this.totalReach + "\r\n";
-        csvContent += "maxReach," + this.maxReach + "\r\n";
+        csvContent += "totalReach," + this.reach.join(',');
 
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
