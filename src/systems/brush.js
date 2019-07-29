@@ -149,7 +149,7 @@ AFRAME.registerBrush = function (name, definition, options) {
         var mesh = wedge.getObject3D('mesh');
 
         var bbox = new THREE.Box3().setFromObject(mesh);
-
+        bbox.expandByScalar(0.1);
 
         // Only draw the line ie. add the points if the controller is in the wedge, OR it is a duplicated point
         if((bbox.containsPoint(pointerPosition) && petalId === 0) || ((petalId !== 0 ) && controllerWithinBounds)) {
