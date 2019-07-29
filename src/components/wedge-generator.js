@@ -23,9 +23,9 @@ AFRAME.registerComponent('wedge-generator', {
         el.sceneEl.emit('update-brush', {data: this.data});
 
         //Bounding box coordinates (m) (These would be set by therapist input)
-        this.maxXReach = 0.3; // Reaching to the left and right
-        this.maxYReach = 0.3; // Reaching up
-        this.maxZReach = 0.3; // Reaching forwards
+        this.maxXReach = 0.55; // Reaching to the left and right
+        this.maxYReach = 0.55; // Reaching up
+        this.maxZReach = 0.55; // Reaching forwards
 
         //Resting position of controller, used as the origin of the bounding box
         this.data.originControllerPosition = new THREE.Vector3();
@@ -33,7 +33,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.originSet = false;
 
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
-        this.userControlledWedgeLocation = true;
+        this.userControlledWedgeLocation = false;
         this.controllerPosition = new THREE.Vector3();
 
         //Update position of controller stored when it changes
@@ -47,6 +47,7 @@ AFRAME.registerComponent('wedge-generator', {
                 self.data.originControllerPosition = self.controllerPosition.clone();
                 self.originHeadsetPosition = self.controllerPosition.clone();
                 self.originSet = true;
+                // self.generateBoundingBoxVisualisation();
             }
             // generate a wedge
             else{
@@ -76,10 +77,10 @@ AFRAME.registerComponent('wedge-generator', {
 
         box.setAttribute('height', this.maxYReach);
         box.setAttribute('depth', this.maxZReach);
-        box.setAttribute('width', this.maxXReach);
+        box.setAttribute('width', this.maxXReach);+
         box.setAttribute('material',  "wireframe:true");
 
-        var y = (this.maxYReach / 2) + this.data.originControllerPosition.y;
+        var y = this.data.originControllerPosition.y - this.maxYReach/2;
         var z = this.data.originControllerPosition.z - (this.maxZReach / 2);
 
         var boxPosition =  this.data.originControllerPosition.x + " " + y + " " + z;
@@ -92,7 +93,7 @@ AFRAME.registerComponent('wedge-generator', {
     //Generate coordinates within a bounded box
     generateRandomBoundedCoordinates: function() {
         var x = Math.random() * this.maxXReach + this.data.originControllerPosition.x - this.maxXReach/2;
-        var y = Math.random() * this.maxYReach + this.data.originControllerPosition.y;
+        var y = Math.random() * this.maxYReach + this.data.originControllerPosition.y - this.maxYReach/2;
         var z = this.data.originControllerPosition.z - Math.random() * this.maxZReach;
 
         return new THREE.Vector3(x, y, z);
