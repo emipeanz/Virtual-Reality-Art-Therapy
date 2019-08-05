@@ -169,6 +169,13 @@ AFRAME.registerBrush = function (name, definition, options) {
               'timestamp': timestamp
             });
 
+            var scene = document.querySelector('a-scene');
+            if (this.data.prevPosition !== null) {
+              //the distance between the current and previous point is used to calculate the length of the stroke.
+              //x10 multiplier used to convert to centimetres
+              scene.sceneEl.emit('point-added', {pointDistance : this.data.prevPosition.distanceTo(position) * 10 });
+            }
+
             this.data.prevPosition = position.clone();
             this.data.prevPointerPosition = pointerPosition.clone();
           }

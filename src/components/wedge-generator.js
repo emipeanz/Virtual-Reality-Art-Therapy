@@ -33,8 +33,9 @@ AFRAME.registerComponent('wedge-generator', {
         this.originSet = false;
 
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
-        this.userControlledWedgeLocation = false;
+        this.userControlledWedgeLocation = true;
         this.controllerPosition = new THREE.Vector3();
+
 
         //Update position of controller stored when it changes
         el.sceneEl.addEventListener('position-changed', function (evt) {

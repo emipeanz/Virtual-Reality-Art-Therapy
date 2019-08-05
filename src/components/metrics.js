@@ -37,9 +37,10 @@ AFRAME.registerComponent('metrics', {
         // "Idle time" is the time spent not painting
         this.totalIdleTime = this.startTime - this.startTime;
 
-        // Total reach
+        // Total reach (m)
         this.reach = [];
-
+        // Length of strokes (cm)
+        this.strokeLengths = [];
 
         el.sceneEl.addEventListener('toggle-mode', function(evt){
             self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
@@ -68,7 +69,17 @@ AFRAME.registerComponent('metrics', {
                 self.paintStrokesInside++;
                 self.firstPoint = false;
             }
+        });
 
+        el.sceneEl.addEventListener('brushcolor-changed', function (evt) {
+            if (self.strokeLengths[self.strokeLengths.length-1] !== 0) {
+                self.strokeLengths.push(0);
+            }
+            console.log("strokes: ", self.strokeLengths);
+        });
+
+        el.sceneEl.addEventListener('point-added', function (evt) {
+            self.strokeLengths[self.strokeLengths.length-1] = self.strokeLengths[self.strokeLengths.length-1] + evt.detail.pointDistance;
         });
 
         document.getElementById('export-button').addEventListener('click', function() {
