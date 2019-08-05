@@ -122,8 +122,6 @@ AFRAME.registerComponent('wedge-generator', {
             var position = this.generateRandomBoundedCoordinates();
         }
 
-        console.log("new wedge position:", position)
-
         this.data.currentWedgePosition = position;
 
         // Height is between 0.1 and 0.3
@@ -178,7 +176,6 @@ AFRAME.registerComponent('wedge-generator', {
             originToWedge.addVectors(wedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
             //Distance to diverge by is between 1 and 2 metres
             originToWedge.multiplyScalar(Math.random() + 1);
-            originToWedge.add(this.data.originControllerPosition.clone());
 
             //Randomly vary the vertical offset of the flower
             var yOffset = Math.random() * 1.5 - 0.5;
