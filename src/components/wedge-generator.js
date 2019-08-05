@@ -29,6 +29,7 @@ AFRAME.registerComponent('wedge-generator', {
 
         //Resting position of controller, used as the origin of the bounding box
         this.data.originControllerPosition = new THREE.Vector3();
+        this.data.currentWedgePosition = new THREE.Vector3();
         this.originHeadsetPosition = new THREE.Vector3();
         this.originSet = false;
 
@@ -121,6 +122,8 @@ AFRAME.registerComponent('wedge-generator', {
             var position = this.generateRandomBoundedCoordinates();
         }
 
+        console.log("new wedge position:", position)
+
         this.data.currentWedgePosition = position;
 
         // Height is between 0.1 and 0.3
@@ -160,6 +163,7 @@ AFRAME.registerComponent('wedge-generator', {
             document.querySelector('a-scene').appendChild(drawing);
             this.data.drawingId++;
             this.removeAndAnimateOldCanvasDrawing();
+
         }
     },
 
@@ -167,31 +171,33 @@ AFRAME.registerComponent('wedge-generator', {
 
         //Find the relative position of the current wedge with the origin and extend it then reapply original offset.
         var originToWedge = new THREE.Vector3();
-        originToWedge.addVectors(this.data.currentWedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
-        //Distance to diverge by is between 1 and 2 metres
-        originToWedge.multiplyScalar(Math.random() + 1);
-        originToWedge.add(this.data.originControllerPosition.clone());
 
+        var wedge = document.querySelector('a-cone');
+        if(wedge !== null) {
+            var wedgePosition =  wedge.getAttribute("position");
+            originToWedge.addVectors(wedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
+            //Distance to diverge by is between 1 and 2 metres
+            originToWedge.multiplyScalar(Math.random() + 1);
+            originToWedge.add(this.data.originControllerPosition.clone());
 
-        //Randomly vary the vertical offset of the flower
-        var yOffset = Math.random() * 1.5 - 0.5;
+            //Randomly vary the vertical offset of the flower
+            var yOffset = Math.random() * 1.5 - 0.5;
 
-        //Final position of the drawing
-        var formattedPos =  originToWedge.x + " " + yOffset + " " + originToWedge.z;
+            //Final position of the drawing
+            var formattedPos = originToWedge.x + " " + yOffset + " " + originToWedge.z;
 
+            var moveUpAnimation = document.createElement('a-animation');
+            moveUpAnimation.setAttribute('attribute', 'position');
+            moveUpAnimation.setAttribute('to', formattedPos);
+            moveUpAnimation.setAttribute('fill', 'forwards');
+            moveUpAnimation.setAttribute("autoplay", "false");
+            moveUpAnimation.setAttribute("dur", "1000");
 
-
-        var moveUpAnimation = document.createElement('a-animation');
-        moveUpAnimation.setAttribute('attribute', 'position');
-        moveUpAnimation.setAttribute('to', formattedPos);
-        moveUpAnimation.setAttribute('fill', 'forwards');
-        moveUpAnimation.setAttribute("autoplay", "false");
-        moveUpAnimation.setAttribute("dur", "1000");
-
-        var oldCanvases = document.querySelectorAll('.a-drawing');
-        var oldCanvas = oldCanvases[oldCanvases.length - 2];
-        if (oldCanvas !== null) {
-            oldCanvas.appendChild(moveUpAnimation);
+            var oldCanvases = document.querySelectorAll('.a-drawing');
+            var oldCanvas = oldCanvases[oldCanvases.length - 2];
+            if (oldCanvas !== null && oldCanvas !== undefined) {
+                oldCanvas.appendChild(moveUpAnimation);
+            }
         }
     },
 

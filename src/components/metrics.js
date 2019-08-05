@@ -75,7 +75,6 @@ AFRAME.registerComponent('metrics', {
             if (self.strokeLengths[self.strokeLengths.length-1] !== 0) {
                 self.strokeLengths.push(0);
             }
-            console.log("strokes: ", self.strokeLengths);
         });
 
         el.sceneEl.addEventListener('point-added', function (evt) {
