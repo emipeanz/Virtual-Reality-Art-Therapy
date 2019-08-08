@@ -33,7 +33,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.originSet = false;
 
         //If this is set to true, wedges are generated where the user clicks, otherwise location is random
-        this.userControlledWedgeLocation = false;
+        this.userControlledWedgeLocation = true;
         this.controllerPosition = new THREE.Vector3();
 
         //Update position of controller stored when it changes
@@ -188,9 +188,11 @@ AFRAME.registerComponent('wedge-generator', {
         moveUpAnimation.setAttribute("dur", "1000");
 
         var oldCanvases = document.querySelectorAll('.a-drawing');
-        var oldCanvas = oldCanvases[oldCanvases.length - 2];
-        if (oldCanvas !== null) {
-            oldCanvas.appendChild(moveUpAnimation);
+        if (oldCanvases.length > 5) {
+            var animatingCanvas = oldCanvases[oldCanvases.length - 6];
+            if (animatingCanvas !== null) {
+                animatingCanvas.appendChild(moveUpAnimation);
+            }
         }
     },
 
