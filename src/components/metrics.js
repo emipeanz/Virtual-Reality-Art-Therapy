@@ -37,9 +37,10 @@ AFRAME.registerComponent('metrics', {
         // "Idle time" is the time spent not painting
         this.totalIdleTime = this.startTime - this.startTime;
 
-        // Total reach
-        this.reach = [];
-
+        // Total reach (m)
+        this.reaches = [];
+        // Length of strokes (cm)
+        this.strokeLengths = [];
 
         el.sceneEl.addEventListener('toggle-mode', function(evt){
             self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
@@ -68,7 +69,16 @@ AFRAME.registerComponent('metrics', {
                 self.paintStrokesInside++;
                 self.firstPoint = false;
             }
+        });
 
+        el.sceneEl.addEventListener('brushcolor-changed', function (evt) {
+            if (self.strokeLengths[self.strokeLengths.length-1] !== 0) {
+                self.strokeLengths.push(0);
+            }
+        });
+
+        el.sceneEl.addEventListener('point-added', function (evt) {
+            self.strokeLengths[self.strokeLengths.length-1] = self.strokeLengths[self.strokeLengths.length-1] + evt.detail.pointDistance;
         });
 
         document.getElementById('export-button').addEventListener('click', function() {
@@ -78,9 +88,7 @@ AFRAME.registerComponent('metrics', {
         el.sceneEl.addEventListener('wedge-generated', function (evt) {
             //Calculate the distance between the origin and the wedge
             var distance = evt.detail.data.currentWedgePosition.distanceTo(evt.detail.data.originControllerPosition);
-            self.totalReach = self.totalReach + distance;
-
-            self.reach.push(distance);
+            self.reaches.push(distance);
 
         });
 
@@ -113,7 +121,8 @@ AFRAME.registerComponent('metrics', {
         console.log("Strokes Painted Inside Wedge:", this.paintStrokesInside);
         console.log("Strokes Painted Outside Wedge:", this.paintStrokesOutside);
         console.log("Wedge is user controlled:", this.userControlledWedgeLocation);
-        console.log("Total reach:", this.totalReach)
+        console.log("Reaches:", this.reaches)
+        console.log("Stroke lengths:", this.strokeLengths)
     },
 
     msToTime: function(s) {
@@ -146,7 +155,8 @@ AFRAME.registerComponent('metrics', {
         csvContent += "idleTime," + this.msToTime(this.totalIdleTime) + "\r\n";
 
         // add reach metrics
-        csvContent += "totalReach," + this.reach.join(',');
+        csvContent += "totalReach," + this.reaches.join(',') + "\r\n";
+        csvContent += "strokeLengths," + this.strokeLengths.join(',') + "\r\n";
 
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
@@ -167,8 +177,7 @@ AFRAME.registerComponent('metrics', {
         this.startTimeOfPause = new Date().getTime();
         this.totalActiveTime = this.startTime - this.startTime;
         this.totalIdleTime = this.startTime - this.startTime;
-        this.totalReach = 0;
-        this.maxReach = 0;
+        this.strokeLengths = [];
 
     }
 
