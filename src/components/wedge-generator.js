@@ -192,9 +192,14 @@ AFRAME.registerComponent('wedge-generator', {
 
             var oldCanvases = document.querySelectorAll('.a-drawing');
             var oldCanvas = oldCanvases[oldCanvases.length - 2];
-            if (oldCanvas !== null && oldCanvas !== undefined) {
-                oldCanvas.appendChild(moveUpAnimation);
-
+            if (oldCanvases.length > 5) {
+                if (oldCanvas !== null) {
+                    var animatingCanvas = oldCanvases[oldCanvases.length - 6];
+                    oldCanvas.appendChild(moveUpAnimation);
+                    if (animatingCanvas !== null) {
+                        animatingCanvas.appendChild(moveUpAnimation);
+                    }
+                }
             }
         }
     },
