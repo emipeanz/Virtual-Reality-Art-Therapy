@@ -194,6 +194,7 @@ AFRAME.registerComponent('wedge-generator', {
             var oldCanvas = oldCanvases[oldCanvases.length - 2];
             if (oldCanvas !== null && oldCanvas !== undefined) {
                 oldCanvas.appendChild(moveUpAnimation);
+
             }
         }
     },
