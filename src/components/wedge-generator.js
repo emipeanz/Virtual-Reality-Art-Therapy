@@ -27,6 +27,8 @@ AFRAME.registerComponent('wedge-generator', {
         this.maxYReach = 0.55; // Reaching up
         this.maxZReach = 0.55; // Reaching forwards
 
+        this.numCanvases = 5;
+
         //Resting position of controller, used as the origin of the bounding box
         this.data.originControllerPosition = new THREE.Vector3();
         this.data.currentWedgePosition = new THREE.Vector3();
@@ -37,6 +39,7 @@ AFRAME.registerComponent('wedge-generator', {
         this.userControlledWedgeLocation = true;
         this.controllerPosition = new THREE.Vector3();
 
+        this.pastCanvasPositions = [];
 
         //Update position of controller stored when it changes
         el.sceneEl.addEventListener('position-changed', function (evt) {
@@ -122,6 +125,8 @@ AFRAME.registerComponent('wedge-generator', {
             var position = this.generateRandomBoundedCoordinates();
         }
 
+        this.pastCanvasPositions.push(position.clone());
+
         this.data.currentWedgePosition = position;
 
         // Height is between 0.1 and 0.3
@@ -160,8 +165,11 @@ AFRAME.registerComponent('wedge-generator', {
             drawing.id = this.data.drawingId;
             document.querySelector('a-scene').appendChild(drawing);
             this.data.drawingId++;
-            this.removeAndAnimateOldCanvasDrawing();
 
+            var oldCanvases = document.querySelectorAll('.a-drawing');
+            if (oldCanvases.length > this.numCanvases) {
+                this.removeAndAnimateOldCanvasDrawing();
+            }
         }
     },
 
@@ -170,35 +178,33 @@ AFRAME.registerComponent('wedge-generator', {
         //Find the relative position of the current wedge with the origin and extend it then reapply original offset.
         var originToWedge = new THREE.Vector3();
 
-        var wedge = document.querySelector('a-cone');
-        if(wedge !== null) {
-            var wedgePosition =  wedge.getAttribute("position");
-            originToWedge.addVectors(wedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
-            //Distance to diverge by is between 1 and 2 metres
-            originToWedge.multiplyScalar(Math.random() + 1);
+        var wedgePosition =  this.pastCanvasPositions.shift();
 
-            //Randomly vary the vertical offset of the flower
-            var yOffset = Math.random() * 1.5 - 0.5;
+        originToWedge.addVectors(wedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
+        //Distance to diverge by is between 1 and 2 metres
+        originToWedge.multiplyScalar(Math.random() + 1);
 
-            //Final position of the drawing
-            var formattedPos = originToWedge.x + " " + yOffset + " " + originToWedge.z;
+        //Randomly vary the vertical offset of the flower
+        var yOffset = Math.random() * 1.5 - 0.5;
 
-            var moveUpAnimation = document.createElement('a-animation');
-            moveUpAnimation.setAttribute('attribute', 'position');
-            moveUpAnimation.setAttribute('to', formattedPos);
-            moveUpAnimation.setAttribute('fill', 'forwards');
-            moveUpAnimation.setAttribute("autoplay", "false");
-            moveUpAnimation.setAttribute("dur", "1000");
+        //Final position of the drawing
+        var formattedPos = originToWedge.x + " " + yOffset + " " + originToWedge.z;
 
-            var oldCanvases = document.querySelectorAll('.a-drawing');
-            var oldCanvas = oldCanvases[oldCanvases.length - 2];
-            if (oldCanvases.length > 5) {
-                if (oldCanvas !== null) {
-                    var animatingCanvas = oldCanvases[oldCanvases.length - 6];
-                    oldCanvas.appendChild(moveUpAnimation);
-                    if (animatingCanvas !== null) {
-                        animatingCanvas.appendChild(moveUpAnimation);
-                    }
+        var moveUpAnimation = document.createElement('a-animation');
+        moveUpAnimation.setAttribute('attribute', 'position');
+        moveUpAnimation.setAttribute('to', formattedPos);
+        moveUpAnimation.setAttribute('fill', 'forwards');
+        moveUpAnimation.setAttribute("autoplay", "false");
+        moveUpAnimation.setAttribute("dur", "1000");
+
+        var oldCanvases = document.querySelectorAll('.a-drawing');
+        var oldCanvas = oldCanvases[oldCanvases.length - 2];
+        if (oldCanvases.length > this.numCanvases) {
+            if (oldCanvas !== null) {
+                var animatingCanvas = oldCanvases[oldCanvases.length - (this.numCanvases + 1)];
+                oldCanvas.appendChild(moveUpAnimation);
+                if (animatingCanvas !== null) {
+                    animatingCanvas.appendChild(moveUpAnimation);
                 }
             }
         }
