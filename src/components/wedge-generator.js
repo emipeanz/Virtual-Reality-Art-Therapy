@@ -2,7 +2,7 @@ AFRAME.registerComponent('wedge-generator', {
 
     schema: {
         minHeight: { default: 0.1 },
-        maxHeight: { default: 0.3 },
+        maxHeight: { default: 0.25 },
         minPetalNum: { default: 4 },
         maxPetalNum: { default: 10 },
         currentPetalNum: { default: 4},
@@ -140,6 +140,11 @@ AFRAME.registerComponent('wedge-generator', {
         var rotation = new THREE.Vector3(0, 0, 0);
         rotation.y = 90 -
             (Math.atan((position.z - this.originHeadsetPosition.z)/(position.x - this.originHeadsetPosition.x)))*(180/Math.PI);
+
+        var radialDisplacement = Math.sqrt(Math.pow(position.x-this.originHeadsetPosition.x, 2) + Math.pow(position.z-this.originHeadsetPosition.z, 2));
+        console.log("radial", radialDisplacement);
+
+        rotation.x = 90 - Math.atan((position.y - this.originHeadsetPosition.y)/radialDisplacement) * (180/Math.PI);
 
         wedge.setAttribute("scale", "1 1 0.2");
         wedge.setAttribute("position", position);
