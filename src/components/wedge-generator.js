@@ -17,6 +17,18 @@ AFRAME.registerComponent('wedge-generator', {
         var self = this;
         var data = this.data;
 
+        this.currWedgeCounter = 0;
+
+        this.fakeAIWedgePlacements = [
+            [ 0.009637050207572884 , -0.026891350746154785 , -0.1742700169671707 ],
+            [ 0.021255732931749094 , -0.020305395126342773 , -0.25062793269951555 ],
+            [ 0.032736139109402984 , -0.023402690887451172 , -0.3355934856036811 ],
+            [ 0.035110038715842506 , -0.020269036293029785 , -0.40061133558792505 ],
+            [ 0.04224295630784525 , -0.021762967109680176 , -0.5065366977292882 ],
+            [ 0.04315293030215628 , -0.02095353603363037 , -0.5927750212872951 ],
+            [ 0.014083191178116294 , 0.6951117515563965 , -0.09195329232025529 ],
+        ];
+
         //Set up initial state and variables
         var el = this.el; //get reference to the entity.
 
@@ -116,10 +128,23 @@ AFRAME.registerComponent('wedge-generator', {
         if(this.userControlledWedgeLocation){
             // Position wedge relative to position of controller
             var position = this.controllerPosition;
+
+            var vect = new THREE.Vector3();
+            vect.addVectors(position, this.data.originControllerPosition.clone().negate());
+            console.log("[", vect.x, ",", vect.y, ",", vect.z, "]");
         }
         //Generate the x, y and z coordinates somewhere within the bounded box
         else{
-            var position = this.generateRandomBoundedCoordinates();
+
+            var position = new THREE.Vector3(this.data.originControllerPosition.x + this.fakeAIWedgePlacements[this.currWedgeCounter][0],
+                this.data.originControllerPosition.y + this.fakeAIWedgePlacements[this.currWedgeCounter][1],
+                this.data.originControllerPosition.z + this.fakeAIWedgePlacements[this.currWedgeCounter][2]);
+
+            console.log(position);
+            this.currWedgeCounter++;
+            if(this.currWedgeCounter > this.fakeAIWedgePlacements.length - 1) {
+                this.currWedgeCounter = 0;
+            }
         }
 
         this.data.currentWedgePosition = position;
