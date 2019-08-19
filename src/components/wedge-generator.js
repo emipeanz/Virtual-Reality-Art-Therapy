@@ -199,11 +199,6 @@ AFRAME.registerComponent('wedge-generator', {
         rotation.y = 90 -
             (Math.atan((position.z - this.originHeadsetPosition.z)/(position.x - this.originHeadsetPosition.x)))*(180/Math.PI);
 
-        var radialDisplacement = Math.sqrt(Math.pow(position.x-this.originHeadsetPosition.x, 2) + Math.pow(position.z-this.originHeadsetPosition.z, 2));
-        console.log("radial", radialDisplacement);
-
-        rotation.x = 90 - Math.atan((position.y - this.originHeadsetPosition.y)/radialDisplacement) * (180/Math.PI);
-
         wedge.setAttribute("scale", "1 1 0.2");
         wedge.setAttribute("position", position);
         wedge.setAttribute("height", this.data.currentHeight);
