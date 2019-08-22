@@ -163,7 +163,7 @@ AFRAME.registerComponent('brush', {
   setRandomColor: function() {
     this.currentHue = Math.floor(720 * Math.random()) % 360
     this.hue = this.currentHue;
-    this.sat = Math.floor(25 + 70 * Math.random());
+    this.sat = Math.floor(40 + 60 * Math.random());
     this.light = Math.floor(40 + 40 * Math.random());
     this.setColor(this.hue, this.sat, this.light);
   },
