@@ -243,8 +243,8 @@ AFRAME.registerComponent('wedge-generator', {
         var wedgePosition =  this.pastCanvasPositions.shift();
 
         originToWedge.addVectors(wedgePosition.clone(), this.data.originControllerPosition.clone().negate()).normalize();
-        //Distance to diverge by is between 1 and 1.5 metres
-        originToWedge.multiplyScalar(Math.random()*0.5 + 1);
+        //Distance to diverge by is between 1.8 and 2 metres
+        originToWedge.multiplyScalar(Math.random() * 0.2 + 1.8);
 
         //Randomly vary the vertical offset of the flower
         var yOffset = Math.random() * 1.5 - 0.5;
