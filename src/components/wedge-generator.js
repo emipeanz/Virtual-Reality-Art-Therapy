@@ -163,14 +163,12 @@ AFRAME.registerComponent('wedge-generator', {
         // Depending on the boolean variable, let the users place the wedge where they want, or randomly
         var vect = new THREE.Vector3();
         vect.addVectors(this.controllerPosition, this.data.originControllerPosition.clone().negate());
-        console.log("[", vect.x, ",", vect.y, ",", vect.z, "]");
         if(this.userControlledWedgeLocation){
             // Position wedge relative to position of controller
             var position = this.controllerPosition;
 
             var vect = new THREE.Vector3();
             vect.addVectors(position, this.data.originControllerPosition.clone().negate());
-            console.log("[", vect.x, ",", vect.y, ",", vect.z, "]");
         }
         //Generate the x, y and z coordinates somewhere within the bounded box
         else{
@@ -179,7 +177,6 @@ AFRAME.registerComponent('wedge-generator', {
                 this.data.originControllerPosition.y + this.fakeAIWedgePlacements[this.currWedgeCounter][1],
                 this.data.originControllerPosition.z + this.fakeAIWedgePlacements[this.currWedgeCounter][2]);
 
-            console.log(position);
             this.currWedgeCounter++;
             if(this.currWedgeCounter > this.fakeAIWedgePlacements.length - 1) {
                 this.currWedgeCounter = 0;
@@ -216,7 +213,6 @@ AFRAME.registerComponent('wedge-generator', {
 
         this.el.sceneEl.appendChild(wedge);
         this.el.sceneEl.emit('wedge-generated', {data: this.data});
-        console.log('position of wedge in queue:', this.currWedgeCounter);
     },
 
     addNewCanvas: function() {
