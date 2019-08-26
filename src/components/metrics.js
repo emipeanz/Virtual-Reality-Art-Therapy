@@ -39,8 +39,13 @@ AFRAME.registerComponent('metrics', {
 
         // Total reach (m)
         this.reaches = [];
+        // Time each reach metric is recorded (ms) ie reach[0] occurred at reachTimes[0]
+        this.reachTimes = [];
+
         // Length of strokes (cm)
         this.strokeLengths = [];
+        // Time each stroke length is recorded (ms)
+        this.strokeLengthTimes = [];
 
         el.sceneEl.addEventListener('toggle-mode', function(evt){
             self.userControlledWedgeLocation = !self.userControlledWedgeLocation;
@@ -74,6 +79,7 @@ AFRAME.registerComponent('metrics', {
         el.sceneEl.addEventListener('brushcolor-changed', function (evt) {
             if (self.strokeLengths[self.strokeLengths.length-1] !== 0) {
                 self.strokeLengths.push(0);
+                self.strokeLengthTimes.push(self.msToTime(self.getTotalTimeElapsed()));
             }
         });
 
@@ -89,6 +95,7 @@ AFRAME.registerComponent('metrics', {
             //Calculate the distance between the origin and the wedge
             var distance = evt.detail.data.currentWedgePosition.distanceTo(evt.detail.data.originControllerPosition);
             self.reaches.push(distance);
+            self.reachTimes.push(self.msToTime(self.getTotalTimeElapsed()));
 
         });
 
@@ -122,7 +129,9 @@ AFRAME.registerComponent('metrics', {
         console.log("Strokes Painted Outside Wedge:", this.paintStrokesOutside);
         console.log("Wedge is user controlled:", this.userControlledWedgeLocation);
         console.log("Reaches:", this.reaches)
+        console.log("Reach Times:", this.reachTimes)
         console.log("Stroke lengths:", this.strokeLengths)
+        console.log("Stroke length Times:", this.strokeLengthTimes)
     },
 
     msToTime: function(s) {
@@ -154,9 +163,12 @@ AFRAME.registerComponent('metrics', {
         csvContent += "activeTime," + this.msToTime(this.totalActiveTime) + "\r\n";
         csvContent += "idleTime," + this.msToTime(this.totalIdleTime) + "\r\n";
 
-        // add reach metrics
+        // add reach metrics and record the time each new metric is taken
         csvContent += "totalReach," + this.reaches.join(',') + "\r\n";
+        csvContent += "totalReachTimes," + this.reachTimes.join(',') + "\r\n";
+
         csvContent += "strokeLengths," + this.strokeLengths.join(',') + "\r\n";
+        csvContent += "strokeLengthTimes," + this.strokeLengthTimes.join(',') + "\r\n";
 
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
@@ -178,7 +190,6 @@ AFRAME.registerComponent('metrics', {
         this.totalActiveTime = this.startTime - this.startTime;
         this.totalIdleTime = this.startTime - this.startTime;
         this.strokeLengths = [];
-
     }
 
 })
